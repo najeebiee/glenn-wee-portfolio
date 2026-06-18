@@ -1,30 +1,43 @@
 "use client";
 
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ScrollLine from "@/components/ScrollLine";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const storySteps = [
   {
-    number: "01",
+    number: "1",
     title: "Why I entered the industry",
-    body: "I entered financial advisory for income scalability. The reason I stayed became something much more meaningful.",
+    bodyLines: [
+      "I entered financial advisory for income scalability.",
+      "The reason I stayed became something much more meaningful.",
+    ],
     icon: "/icons/bar-chart-svgrepo-com.svg",
   },
   {
-    number: "02",
+    number: "2",
     title: "The lesson that changed my thinking",
-    body: "In my early twenties, cashflow problems in an overseas F&B venture exposed the cost of planning without forecasting, runway, or stress tests.",
+    bodyLines: [
+      "In my early twenties, cashflow problems in an",
+      "overseas F&B venture exposed the cost of planning",
+      "without forecasting, runway, or stress tests.",
+    ],
     icon: "/icons/compass-svgrepo-com.svg",
   },
   {
-    number: "03",
+    number: "3",
     title: "How I advise clients today",
-    body: "That experience shaped my approach: calculate risk factually, manage decisions behaviourally, and build plans that can withstand real life.",
+    bodyLines: [
+      "That experience shaped my approach: calculate risk",
+      "factually, manage decisions behaviourally, and build",
+      "plans that can withstand real life.",
+    ],
     icon: "/icons/shield-checkmark-sharp-svgrepo-com.svg",
   },
 ];
@@ -35,10 +48,88 @@ function StoryIcon({ src }: { src: string }) {
       src={src}
       alt=""
       aria-hidden="true"
-      width={121}
-      height={121}
-      className="h-[121px] w-[121px] object-contain invert"
+      width={140}
+      height={140}
+      className="h-[140px] w-[140px] object-contain invert"
     />
+  );
+}
+
+function SplitStoryTitle({ text }: { text: string }) {
+  let charIndex = 0;
+
+  return (
+    <span aria-label={text}>
+      {text.split(" ").map((word, wordIndex, words) => (
+        <span
+          key={`${word}-${wordIndex}`}
+          className="split-word"
+          aria-hidden="true"
+        >
+          {Array.from(word).map((char) => {
+            const currentIndex = charIndex;
+            charIndex += 1;
+
+            return (
+              <span
+                key={`${char}-${currentIndex}`}
+                className="story-split-char"
+                style={
+                  {
+                    "--char-delay": `${currentIndex * 42}ms`,
+                  } as CSSProperties
+                }
+              >
+                {char}
+              </span>
+            );
+          })}
+          {wordIndex < words.length - 1 ? "\u00A0" : null}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function SplitQuoteText({
+  text,
+  isActive,
+}: {
+  text: string;
+  isActive: boolean;
+}) {
+  let charIndex = 0;
+
+  return (
+    <span aria-label={text} className={isActive ? "is-visible" : undefined}>
+      {text.split(" ").map((word, wordIndex, words) => (
+        <span
+          key={`${word}-${wordIndex}`}
+          className="split-word"
+          aria-hidden="true"
+        >
+          {Array.from(word).map((char) => {
+            const currentIndex = charIndex;
+            charIndex += 1;
+
+            return (
+              <span
+                key={`${char}-${currentIndex}`}
+                className="quote-split-char"
+                style={
+                  {
+                    "--char-delay": `${currentIndex * 11}ms`,
+                  } as CSSProperties
+                }
+              >
+                {char}
+              </span>
+            );
+          })}
+          {wordIndex < words.length - 1 ? "\u00A0" : null}
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -64,6 +155,8 @@ export default function StoryStepper() {
   const progressRef = useRef<HTMLDivElement | null>(null);
   const quoteRef = useRef<HTMLDivElement | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [hasEntered, setHasEntered] = useState(false);
+  const [quoteHasEntered, setQuoteHasEntered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const activeStep = storySteps[activeIndex];
 
@@ -85,10 +178,17 @@ export default function StoryStepper() {
 
       gsap.set(quoteRef.current, { autoAlpha: 0, y: 48 });
 
+      const entranceTrigger = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top 75%",
+        once: true,
+        onEnter: () => setHasEntered(true),
+      });
+
       const trigger = ScrollTrigger.create({
         trigger: sectionRef.current,
         start: "top top",
-        end: "+=3000",
+        end: "+=3800",
         pin: pinRef.current,
         pinSpacing: true,
         scrub: 0.25,
@@ -107,7 +207,10 @@ export default function StoryStepper() {
             transformOrigin: "left center",
           });
 
-          const quoteProgress = gsap.utils.clamp(0, 1, (self.progress - 0.84) / 0.14);
+          const quoteProgress = gsap.utils.clamp(0, 1, (self.progress - 0.74) / 0.12);
+          if (quoteProgress >= 0.65) {
+            setQuoteHasEntered(true);
+          }
           gsap.to(quoteRef.current, {
             autoAlpha: quoteProgress,
             y: 48 - quoteProgress * 48,
@@ -117,45 +220,55 @@ export default function StoryStepper() {
         },
       });
 
-      return () => trigger.kill();
+      return () => {
+        entranceTrigger.kill();
+        trigger.kill();
+      };
     },
     { dependencies: [reducedMotion], scope: sectionRef }
   );
 
   useGSAP(
     () => {
-      if (reducedMotion) {
+      if (reducedMotion || !hasEntered) {
         return;
       }
 
       const animatedTargets = [
         numberRef.current,
         iconRef.current,
-        contentRef.current,
       ].filter(Boolean) as HTMLElement[];
 
       gsap.fromTo(
         animatedTargets,
         { autoAlpha: 0, y: 28 },
-        { autoAlpha: 1, y: 0, duration: 0.45, ease: "power2.out", stagger: 0.06 }
+        { autoAlpha: 1, y: 0, duration: 0.9, ease: "power2.out", stagger: 0.16 }
       );
+
+      if (contentRef.current) {
+        gsap.fromTo(
+          contentRef.current,
+          { autoAlpha: 0, xPercent: -50, y: 28 },
+          { autoAlpha: 1, xPercent: -50, y: 0, duration: 0.95, ease: "power2.out" }
+        );
+      }
     },
-    { dependencies: [activeIndex, reducedMotion], scope: sectionRef }
+    { dependencies: [activeIndex, hasEntered, reducedMotion], scope: sectionRef }
   );
 
   if (reducedMotion) {
     return (
       <section
         ref={sectionRef}
-        className="mx-auto max-w-[1800px] border-x border-line bg-ink text-white"
+        className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-ink text-white"
       >
-        <div className="relative border-b border-white/55 px-[81px] py-[72px]">
+        <div className="scroll-line-host relative border-b border-white/55 px-[81px] py-[72px]">
           <div className="absolute right-[96px] top-[92px]">
             <StoryIcon src={storySteps[0].icon} />
           </div>
           <div className="grid gap-12 pr-[220px]">
             {storySteps.map((step) => (
-              <article key={step.number} className="grid grid-cols-[220px_1fr] gap-20">
+              <article key={step.number} className="grid grid-cols-[160px_1fr] gap-20">
                 <span className="font-manrope text-[120px] font-medium leading-none">
                   {step.number}
                 </span>
@@ -164,14 +277,15 @@ export default function StoryStepper() {
                     {step.title}
                   </h2>
                   <p className="mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
-                    {step.body}
+                    {step.bodyLines.join(" ")}
                   </p>
                 </div>
               </article>
             ))}
           </div>
+          <ScrollLine direction="x" light className="bottom-0 left-0 right-0" />
         </div>
-        <QuoteBlock />
+        <QuoteBlock quoteHasEntered />
       </section>
     );
   }
@@ -179,7 +293,8 @@ export default function StoryStepper() {
   return (
     <section
       ref={sectionRef}
-      className="mx-auto max-w-[1800px] border-x border-line bg-paper text-ink"
+      data-rail-pause="story"
+      className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-paper text-ink"
     >
       <div
         ref={pinRef}
@@ -188,6 +303,7 @@ export default function StoryStepper() {
         <div
         className="relative h-[642px] overflow-hidden bg-ink text-white"
       >
+        <ScrollLine direction="x" light className="bottom-0 left-[60px] right-[60px]" />
         <div className="absolute inset-x-[60px] bottom-0 h-px bg-white/55" />
         <p
           ref={numberRef}
@@ -196,19 +312,33 @@ export default function StoryStepper() {
           {activeStep.number}
         </p>
 
-        <div ref={iconRef} className="absolute right-[120px] top-[92px] text-white">
+        <div ref={iconRef} className="absolute right-[112px] top-[82px] text-white">
           <StoryIcon src={activeStep.icon} />
         </div>
 
         <div
           ref={contentRef}
-          className="absolute left-[496px] top-[92px] h-[270px] w-[850px] text-center"
+          className={`absolute left-1/2 top-[92px] h-[270px] w-[880px] -translate-x-1/2 text-center ${
+            hasEntered ? "is-visible" : ""
+          }`}
         >
           <h2 className="absolute inset-x-0 top-0 font-manrope text-[64px] font-semibold leading-[1.08]">
-            {activeStep.title}
+            <SplitStoryTitle text={activeStep.title} />
           </h2>
           <p className="absolute inset-x-0 top-[184px] mx-auto max-w-[760px] font-satoshi text-[32px] leading-[1.35]">
-            {activeStep.body}
+            {activeStep.bodyLines.map((line, index) => (
+              <span
+                key={`${activeStep.number}-${line}`}
+                className="story-body-line"
+                style={
+                  {
+                    "--text-reveal-delay": `${220 + index * 260}ms`,
+                  } as CSSProperties
+                }
+              >
+                {line}
+              </span>
+            ))}
           </p>
         </div>
 
@@ -221,13 +351,17 @@ export default function StoryStepper() {
         </div>
       </div>
 
-        <QuoteBlock ref={quoteRef} />
+        <QuoteBlock ref={quoteRef} quoteHasEntered={quoteHasEntered} />
       </div>
     </section>
   );
 }
 
-const QuoteBlock = forwardRef<HTMLDivElement>(function QuoteBlock(_, ref) {
+const quoteText =
+  "The best plan is not the one that looks best on paper. It is the one that can survive real life.";
+
+const QuoteBlock = forwardRef<HTMLDivElement, { quoteHasEntered?: boolean }>(
+  function QuoteBlock({ quoteHasEntered = false }, ref) {
   return (
     <div ref={ref} className="relative h-[438px] bg-paper text-ink">
       <p
@@ -238,11 +372,10 @@ const QuoteBlock = forwardRef<HTMLDivElement>(function QuoteBlock(_, ref) {
       </p>
       <blockquote className="absolute left-[399px] top-[124px] w-[1066px]">
         <p className="font-manrope text-[48px] font-semibold leading-[1.38]">
-          The best plan is not the one that looks best on paper. It is the one
-          that can survive real life.
+          <SplitQuoteText text={quoteText} isActive={quoteHasEntered} />
         </p>
         <footer className="mt-[33px] flex items-center gap-6">
-          <div className="relative size-14 overflow-hidden rounded-full bg-white">
+          <div className="relative size-14 overflow-hidden rounded-full border border-line bg-white">
             <Image
               src="/images/glenn-portrait.png"
               alt="Glenn Wee"

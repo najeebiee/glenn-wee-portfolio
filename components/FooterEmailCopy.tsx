@@ -1,10 +1,31 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useState } from "react";
 
 const email = "glennweejl@pruadviser.com.sg";
 
-export default function FooterEmailCopy() {
+function SplitFooterEmail() {
+  return (
+    <span aria-hidden="true">
+      {Array.from(email).map((char, index) => (
+        <span
+          key={`${char}-${index}`}
+          className="footer-email-char"
+          style={
+            {
+              "--char-delay": `${340 + index * 12}ms`,
+            } as CSSProperties
+          }
+        >
+          {char}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+export default function FooterEmailCopy({ className = "" }: { className?: string }) {
   const [copied, setCopied] = useState(false);
 
   const onCopy = async () => {
@@ -17,11 +38,11 @@ export default function FooterEmailCopy() {
     <button
       type="button"
       onClick={onCopy}
-      className="group relative mt-[18px] block max-w-full text-left font-manrope text-[clamp(42px,3vw,54px)] font-medium leading-[1.36] tracking-normal transition-colors duration-300 hover:text-[#006cff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+      className={`email-copy-button group relative mt-[42px] block w-full max-w-full text-left font-manrope text-[clamp(44px,3.35vw,62px)] font-medium leading-[1.08] tracking-normal focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${className}`}
       aria-label={`Copy ${email}`}
     >
-      <span>{email}</span>
-      <span className="pointer-events-none absolute left-[292px] top-[-20px] rounded-full bg-[#006cff] px-6 py-2 font-satoshi text-[16px] font-bold leading-none text-white opacity-0 shadow-sm transition-all duration-200 group-hover:translate-y-[-2px] group-hover:opacity-100 group-focus-visible:translate-y-[-2px] group-focus-visible:opacity-100">
+      <SplitFooterEmail />
+      <span className="pointer-events-none absolute bottom-full right-0 mb-3 rounded-full bg-ink px-6 py-2 font-satoshi text-[16px] font-bold leading-none text-white opacity-0 shadow-sm transition-all duration-200 group-hover:translate-y-[-2px] group-hover:opacity-100 group-focus-visible:translate-y-[-2px] group-focus-visible:opacity-100">
         {copied ? "Copied" : "Copy"}
       </span>
     </button>

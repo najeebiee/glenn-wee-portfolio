@@ -119,7 +119,16 @@ export default function PrincipleSection() {
             className="principle-card scroll-line-host relative border-l border-white/60 px-6 py-7"
             style={{ "--card-delay": `${cardDelay}ms` } as CSSProperties}
           >
-            <ScrollLine direction="y" light className="bottom-0 left-0 top-0" />
+            <ScrollLine
+              direction="y"
+              end="bottom 45%"
+              light
+              scrub={0.8}
+              start="top 98%"
+              startScale={0}
+              triggerParent
+              className="bottom-0 left-0 top-0"
+            />
             <span className="principle-card-number text-[16px]">{number}</span>
             <h2 className="mt-20 text-[24px] font-semibold tracking-[-0.04em]">
               <AnimatedTitle text={title} delay={cardDelay + 180} />

@@ -10,22 +10,37 @@ type ScrollLineProps = {
   className?: string;
   completeOnEnter?: boolean;
   direction: "x" | "y";
+  end?: string;
   initialComplete?: boolean;
   light?: boolean;
+  scrub?: number | boolean;
+  start?: string;
+  startScale?: number;
   trackPage?: boolean;
+  triggerParent?: boolean;
 };
 
 export default function ScrollLine({
   className = "",
   completeOnEnter = false,
   direction,
+  end,
   initialComplete = false,
   light = false,
+  scrub,
+  start,
+  startScale = 0.86,
   trackPage = false,
+  triggerParent = false,
 }: ScrollLineProps) {
   const lineRef = useRef<HTMLSpanElement | null>(null);
   const completeOnEnterRef = useRef(completeOnEnter);
+  const endRef = useRef(end);
   const initialCompleteRef = useRef(initialComplete);
+  const scrubRef = useRef(scrub);
+  const startRef = useRef(start);
+  const startScaleRef = useRef(startScale);
+  const triggerParentRef = useRef(triggerParent);
 
   useEffect(() => {
     const line = lineRef.current;
@@ -42,10 +57,17 @@ export default function ScrollLine({
     }
 
     const property = direction === "x" ? "scaleX" : "scaleY";
-    const trigger = trackPage ? document.documentElement : line;
+    const trigger =
+      trackPage || !triggerParentRef.current
+        ? trackPage
+          ? document.documentElement
+          : line
+        : line.parentElement ?? line;
     gsap.set(line, {
       [property]:
-        initialCompleteRef.current || completeOnEnterRef.current ? 0 : 0.86,
+        initialCompleteRef.current || completeOnEnterRef.current
+          ? 0
+          : startScaleRef.current,
     });
 
     if (!trackPage && initialCompleteRef.current) {
@@ -93,9 +115,13 @@ export default function ScrollLine({
       ease: "none",
       scrollTrigger: {
         trigger,
-        start: trackPage ? "top top" : "top 90%",
-        end: trackPage ? "+=600" : "top 80%",
-        scrub: 0.45,
+        start: startRef.current ?? (trackPage ? "top top" : "top 90%"),
+        end: endRef.current ?? (trackPage
+          ? "+=600"
+          : direction === "y"
+            ? "bottom 90%"
+            : "top 80%"),
+        scrub: scrubRef.current ?? 0.45,
       },
     });
 
@@ -113,6 +139,8 @@ export default function ScrollLine({
         initialComplete ? "scroll-line-initial-complete" : ""
       } ${
         completeOnEnter ? "scroll-line-complete-on-enter" : ""
+      } ${
+        startScale === 0 ? "scroll-line-start-zero" : ""
       } ${
         light ? "scroll-line-light" : ""
       } ${className}`}

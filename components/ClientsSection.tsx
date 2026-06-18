@@ -245,7 +245,15 @@ export default function ClientsSection() {
             className="client-card scroll-line-host relative border-line px-5 pt-5 first:border-l-0 [&:not(:first-child)]:border-l"
           >
             {index > 0 ? (
-              <ScrollLine direction="y" className="bottom-0 left-0 top-0" />
+              <ScrollLine
+                direction="y"
+                end="bottom 45%"
+                scrub={0.8}
+                start="top 98%"
+                startScale={0}
+                triggerParent
+                className="bottom-0 left-0 top-0"
+              />
             ) : null}
             <div
               className="client-image-frame relative mx-auto h-[456px] w-[465px] overflow-hidden bg-neutral-100"

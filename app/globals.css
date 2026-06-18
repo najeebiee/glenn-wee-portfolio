@@ -316,6 +316,14 @@ a {
   transform: scaleY(0);
 }
 
+.scroll-line-start-zero.scroll-line-x {
+  transform: scaleX(0);
+}
+
+.scroll-line-start-zero.scroll-line-y {
+  transform: scaleY(0);
+}
+
 .problem-kicker,
 .problem-row,
 .services-kicker,

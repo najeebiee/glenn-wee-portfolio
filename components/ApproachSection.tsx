@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollLine from "@/components/ScrollLine";
+import useMediaQuery from "@/components/useMediaQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,10 +19,14 @@ const approachSteps = [
       "Understand priorities, responsibilities, and desired",
       "outcomes.",
     ],
+    tabletBodyLines: [
+      "Understand priorities, responsibilities,",
+      "and desired outcomes.",
+    ],
   },
   {
     number: "02",
-    title: "Assess the current structure",
+    title: "Assess current structure",
     bodyLines: ["Review risk, policies, investments, and", "possible overlaps."],
   },
   {
@@ -46,6 +51,14 @@ const missionVisionItems = [
       "that are mathematically sound, behaviourally",
       "practical, and built to withstand real-life scenarios.",
     ],
+    compactBodyLines: [
+      "To help people achieve freedom",
+      "without repercussions by designing",
+      "financial structures that are",
+      "mathematically sound,",
+      "behaviourally practical, and built",
+      "to withstand real-life scenarios.",
+    ],
     panelClassName:
       "relative border-r border-line bg-paper text-ink approach-mv-panel",
     labelClassName:
@@ -54,8 +67,6 @@ const missionVisionItems = [
       "absolute left-[378px] top-[96px] w-[433px] font-manrope text-[36px] font-semibold leading-[1.36] tracking-normal",
     boxClassName:
       "absolute left-[100px] top-[275px] h-[295px] w-[708px] bg-ink px-20 pt-[83px] text-white",
-    ruleClassName: "absolute inset-x-0 h-px bg-white/35",
-    ruleTops: [118, 150, 182, 214],
   },
   {
     label: "Vision",
@@ -65,6 +76,13 @@ const missionVisionItems = [
       "behaviour, and long-term decision quality rather",
       "than simply focusing on products.",
     ],
+    compactBodyLines: [
+      "To place greater emphasis on",
+      "structured thinking, behaviour,",
+      "and long-term decision quality",
+      "rather than simply focusing",
+      "on products.",
+    ],
     panelClassName: "relative bg-ink text-white approach-mv-panel",
     labelClassName:
       "absolute left-[95px] top-[111px] font-satoshi text-[24px] font-medium leading-none",
@@ -72,8 +90,6 @@ const missionVisionItems = [
       "absolute left-[432px] top-[96px] w-[433px] font-manrope text-[36px] font-semibold leading-[1.36] tracking-normal",
     boxClassName:
       "absolute left-[87px] top-[275px] h-[295px] w-[708px] bg-paper px-20 pt-[83px] text-ink",
-    ruleClassName: "absolute inset-x-0 h-px bg-line/35",
-    ruleTops: [118, 150, 182],
   },
 ];
 
@@ -245,6 +261,10 @@ function MissionVision({
   containerRef?: (element: HTMLDivElement | null) => void;
   isVisible?: boolean;
 }) {
+  const useCompactBodyLines = useMediaQuery(
+    "(min-width: 1024px) and (max-width: 1224px)"
+  );
+
   return (
     <div
       ref={containerRef}
@@ -252,11 +272,16 @@ function MissionVision({
         isVisible ? "is-visible" : ""
       }`}
     >
-      {missionVisionItems.map((item, index) => (
-        <div
-          key={item.label}
-          className={`${item.panelClassName} ${index === 0 ? "scroll-line-host" : ""}`}
-        >
+      {missionVisionItems.map((item, index) => {
+        const bodyLines = useCompactBodyLines
+          ? item.compactBodyLines
+          : item.bodyLines;
+
+        return (
+          <div
+            key={item.label}
+            className={`${item.panelClassName} ${index === 0 ? "scroll-line-host" : ""}`}
+          >
           {index === 0 ? (
             <ScrollLine direction="y" className="bottom-0 right-0 top-0" />
           ) : null}
@@ -277,7 +302,7 @@ function MissionVision({
             style={{ "--mv-delay": `${420 + index * 140}ms` } as CSSProperties}
           >
             <p className="relative z-10 text-center font-satoshi text-[24px] font-medium leading-[1.34]">
-              {item.bodyLines.map((line, lineIndex) => (
+              {bodyLines.map((line, lineIndex) => (
                 <span
                   key={`${item.label}-${line}`}
                   className="approach-mv-body-line"
@@ -291,21 +316,10 @@ function MissionVision({
                 </span>
               ))}
             </p>
-            {item.ruleTops.map((top, ruleIndex) => (
-              <div
-                key={`${item.label}-${top}`}
-                className={`approach-mv-rule ${item.ruleClassName}`}
-                style={
-                  {
-                    top: `${top}px`,
-                    "--mv-rule-delay": `${760 + index * 140 + ruleIndex * 105}ms`,
-                  } as CSSProperties
-                }
-              />
-            ))}
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -323,6 +337,12 @@ export default function ApproachSection() {
   const [hasCompletedFinalStepHold, setHasCompletedFinalStepHold] =
     useState(false);
   const [activeStep, setActiveStep] = useState(0);
+  const [stackStepsVisible, setStackStepsVisible] = useState(false);
+  const stackStepsRef = useRef<HTMLDivElement | null>(null);
+  const isTabletPortrait = useMediaQuery("(max-width: 1023.98px)");
+  const useTabletStepBodyLines = useMediaQuery(
+    "(min-width: 768px) and (max-width: 1023.98px)"
+  );
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -383,61 +403,118 @@ export default function ApproachSection() {
     }
   }, [hasCompletedFinalStepHold, missionVisionInView]);
 
+  useEffect(() => {
+    if (!reducedMotion && !isTabletPortrait) {
+      return;
+    }
+
+    if (reducedMotion) {
+      setStackStepsVisible(true);
+      return;
+    }
+
+    const node = stackStepsRef.current;
+    if (!node) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStackStepsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [isTabletPortrait, reducedMotion]);
+
+  useEffect(() => {
+    if (reducedMotion || isTabletPortrait) {
+      return;
+    }
+
+    const firstFrame = window.requestAnimationFrame(() => {
+      ScrollTrigger.refresh();
+    });
+    const settleTimeout = window.setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 280);
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.clearTimeout(settleTimeout);
+    };
+  }, [isTabletPortrait, reducedMotion]);
+
   useGSAP(
     () => {
-      if (reducedMotion || !sectionRef.current || !pinRef.current) {
+      if (reducedMotion) {
         return;
       }
 
-      const cards = cardsRef.current.filter(Boolean) as HTMLElement[];
-      gsap.set(cards.slice(1), { clipPath: "inset(100% 0% 0% 0%)" });
+      // Pin/mask sequence is desktop-only. gsap.matchMedia gates it on the
+      // viewport AND reverts the pin-spacer cleanly when crossing below 1024px
+      // (a bare ScrollTrigger.kill() leaves the spacer orphaned in the DOM).
+      const mm = gsap.matchMedia();
 
-      const timeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: "+=4200",
-          pin: pinRef.current,
-          pinSpacing: true,
-          scrub: 0.35,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            const progress = self.progress;
-            const nextActiveStep =
-              progress < 0.22 ? 0 : progress < 0.46 ? 1 : progress < 0.7 ? 2 : 3;
+      mm.add("(min-width: 1024px)", () => {
+        if (!sectionRef.current || !pinRef.current) {
+          return;
+        }
 
-            if (progress >= 0.86) {
-              setHasCompletedFinalStepHold(true);
-            }
+        const cards = cardsRef.current.filter(Boolean) as HTMLElement[];
+        gsap.set(cards.slice(1), { clipPath: "inset(100% 0% 0% 0%)" });
 
-            setActiveStep((currentStep) =>
-              currentStep === nextActiveStep ? currentStep : nextActiveStep
-            );
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: "+=4200",
+            pin: pinRef.current,
+            pinSpacing: true,
+            scrub: 0.35,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const progress = self.progress;
+              const nextActiveStep =
+                progress < 0.22 ? 0 : progress < 0.46 ? 1 : progress < 0.7 ? 2 : 3;
+
+              if (progress >= 0.86) {
+                setHasCompletedFinalStepHold(true);
+              }
+
+              setActiveStep((currentStep) =>
+                currentStep === nextActiveStep ? currentStep : nextActiveStep
+              );
+            },
           },
-        },
-      });
-
-      timeline.to({}, { duration: 0.85 });
-
-      cards.slice(1).forEach((card) => {
-        timeline.to(card, {
-          clipPath: "inset(0% 0% 0% 0%)",
-          duration: 1,
-          ease: "none",
         });
+
+        timeline.to({}, { duration: 0.85 });
+
+        cards.slice(1).forEach((card) => {
+          timeline.to(card, {
+            clipPath: "inset(0% 0% 0% 0%)",
+            duration: 1,
+            ease: "none",
+          });
+        });
+
+        timeline.to({}, { duration: 0.95 });
       });
 
-      timeline.to({}, { duration: 0.95 });
-
-      return () => {
-        timeline.scrollTrigger?.kill();
-        timeline.kill();
-      };
+      return () => mm.revert();
     },
-    { dependencies: [reducedMotion], scope: sectionRef }
+    { dependencies: [isTabletPortrait, reducedMotion], scope: sectionRef }
   );
 
-  if (reducedMotion) {
+  if (reducedMotion || isTabletPortrait) {
     return (
       <section
         id="approach"
@@ -454,13 +531,19 @@ export default function ApproachSection() {
               A structured approach built for real life.
             </h2>
           </div>
-          <div className="grid gap-px bg-line">
+          <div
+            ref={stackStepsRef}
+            className={`approach-steps-stack grid gap-px bg-line ${
+              stackStepsVisible ? "is-visible" : ""
+            }`}
+          >
             {approachSteps.map((step, index) => (
               <div
                 key={step.number}
-                className={`grid grid-cols-[120px_1fr] gap-10 px-4 py-10 ${
+                className={`approach-stack-step grid grid-cols-[120px_1fr] gap-10 px-4 py-10 ${
                   index % 2 === 0 ? "bg-ink text-white" : "bg-paper text-ink"
                 }`}
+                style={{ "--stack-delay": `${index * 120}ms` } as CSSProperties}
               >
                 <p className="font-manrope text-[64px] font-semibold leading-none">
                   {step.number}
@@ -470,7 +553,10 @@ export default function ApproachSection() {
                     {step.title}
                   </h3>
                   <p className="mt-5 font-satoshi text-[24px] font-medium leading-[1.35]">
-                    {step.bodyLines.map((line) => (
+                    {(useTabletStepBodyLines
+                      ? step.tabletBodyLines ?? step.bodyLines
+                      : step.bodyLines
+                    ).map((line) => (
                       <span key={`${step.number}-${line}`} className="block">
                         {line}
                       </span>
@@ -495,7 +581,7 @@ export default function ApproachSection() {
       className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-b border-line bg-paper text-ink"
     >
       <ScrollLine direction="x" className="bottom-0 left-0 right-0" />
-      <div ref={pinRef} className="h-[1080px] bg-paper">
+      <div ref={pinRef} className="approach-pin h-[1080px] bg-paper">
         <div className="scroll-line-host relative grid h-[438px] grid-cols-[45%_55%] border-b border-line">
           <div
             ref={introRef}

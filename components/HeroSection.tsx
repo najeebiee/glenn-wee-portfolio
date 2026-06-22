@@ -3,6 +3,7 @@
 import Image from "next/image";
 import type { CSSProperties, PointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import ScrollLine from "@/components/ScrollLine";
 
 const credentials = [
@@ -19,6 +20,26 @@ const trailImages = [
   "/images/hero-trail/trail-4.webp",
   "/images/hero-trail/trail-5.webp",
   "/images/hero-trail/trail-6.webp",
+];
+
+// Tablet/mobile: an ephemeral trail that plays when the portrait scrolls into
+// view, running on a true top-left -> bottom-right diagonal (y = x). The figure
+// renders full-height in the centre, so the middle tiles pass behind it (depth)
+// while the line stays visible at the top-left and bottom-right ends. Images
+// sequence 1..6 then 6..1 down the diagonal.
+const heroCascade = [
+  { src: trailImages[0], x: 4, y: 5, rotation: -9 },
+  { src: trailImages[1], x: 12, y: 13, rotation: 6 },
+  { src: trailImages[2], x: 21, y: 20, rotation: -5 },
+  { src: trailImages[3], x: 29, y: 30, rotation: 8 },
+  { src: trailImages[4], x: 38, y: 37, rotation: -7 },
+  { src: trailImages[5], x: 46, y: 47, rotation: 6 },
+  { src: trailImages[5], x: 55, y: 54, rotation: -8 },
+  { src: trailImages[4], x: 63, y: 64, rotation: 7 },
+  { src: trailImages[3], x: 72, y: 71, rotation: -6 },
+  { src: trailImages[2], x: 80, y: 81, rotation: 8 },
+  { src: trailImages[1], x: 88, y: 88, rotation: -5 },
+  { src: trailImages[0], x: 95, y: 95, rotation: 7 },
 ];
 
 type TrailItem = {
@@ -124,6 +145,7 @@ function HeroPortraitTrail({ items }: { items: TrailItem[] }) {
 }
 
 function HeroPortraitPanel() {
+  const panelRef = useRef<HTMLDivElement | null>(null);
   const itemIdRef = useRef(0);
   const imageIndexRef = useRef(0);
   const lastSpawnRef = useRef({ time: 0, x: 0, y: 0 });
@@ -132,21 +154,105 @@ function HeroPortraitPanel() {
   const [items, setItems] = useState<TrailItem[]>([]);
 
   useEffect(() => {
+    const panel = panelRef.current;
+
+    if (!panel) {
+      return;
+    }
+
+    const tiles = gsap.utils.toArray<HTMLElement>(
+      panel.querySelectorAll(".hero-cascade-tile")
+    );
+
+    if (tiles.length === 0) {
+      return;
+    }
+
+    const mm = gsap.matchMedia();
+
+    mm.add(
+      "(max-width: 1023.98px) and (prefers-reduced-motion: no-preference)",
+      () => {
+        tiles.forEach((tile, index) => {
+          gsap.set(tile, {
+            xPercent: -50,
+            yPercent: -50,
+            rotation: heroCascade[index]?.rotation ?? 0,
+            opacity: 0,
+            scale: 0.82,
+          });
+        });
+
+        let timeline: gsap.core.Timeline | null = null;
+
+        const play = () => {
+          timeline?.kill();
+          timeline = gsap.timeline();
+
+          tiles.forEach((tile, index) => {
+            const appearAt = index * 0.12;
+            timeline!
+              .fromTo(
+                tile,
+                { opacity: 0, scale: 0.82, y: 18 },
+                { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "power2.out" },
+                appearAt
+              )
+              .to(
+                tile,
+                { opacity: 0, scale: 0.92, duration: 0.6, ease: "power1.in" },
+                appearAt + 2.6
+              );
+          });
+        };
+
+        let isVisible = false;
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting && !isVisible) {
+              isVisible = true;
+              play();
+            } else if (!entry.isIntersecting) {
+              isVisible = false;
+            }
+          },
+          { threshold: 0.25 }
+        );
+
+        observer.observe(panel);
+
+        return () => {
+          observer.disconnect();
+          timeline?.kill();
+          gsap.set(tiles, { clearProps: "all" });
+        };
+      }
+    );
+
+    return () => mm.revert();
+  }, []);
+
+  useEffect(() => {
     const removeTimers = removeTimersRef.current;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const coarsePointer = window.matchMedia("(pointer: coarse)");
+    const tabletPortrait = window.matchMedia("(max-width: 1023.98px)");
 
     const syncEnabled = () => {
-      setIsEnabled(!reducedMotion.matches && !coarsePointer.matches);
+      setIsEnabled(
+        !reducedMotion.matches && !coarsePointer.matches && !tabletPortrait.matches
+      );
     };
 
     syncEnabled();
     reducedMotion.addEventListener("change", syncEnabled);
     coarsePointer.addEventListener("change", syncEnabled);
+    tabletPortrait.addEventListener("change", syncEnabled);
 
     return () => {
       reducedMotion.removeEventListener("change", syncEnabled);
       coarsePointer.removeEventListener("change", syncEnabled);
+      tabletPortrait.removeEventListener("change", syncEnabled);
       removeTimers.forEach((timer) => window.clearTimeout(timer));
     };
   }, []);
@@ -195,11 +301,40 @@ function HeroPortraitPanel() {
 
   return (
     <div
+      ref={panelRef}
       className="scroll-line-host relative isolate h-[934px] overflow-hidden border-l border-line bg-white"
       onPointerMove={onPointerMove}
     >
-      <ScrollLine direction="y" initialComplete className="bottom-0 left-0 top-0" />
+      <ScrollLine
+        direction="y"
+        initialComplete
+        className="hero-portrait-vline bottom-0 left-0 top-0"
+      />
+      <ScrollLine
+        direction="x"
+        completeOnEnter
+        className="hero-portrait-hline left-0 right-0 top-0"
+      />
       <HeroPortraitTrail items={items} />
+      <div className="hero-cascade absolute inset-0 z-0" aria-hidden="true">
+        {heroCascade.map((item, index) => (
+          <span
+            key={`${item.src}-${index}`}
+            className="hero-cascade-tile absolute"
+            style={{ left: `${item.x}%`, top: `${item.y}%` }}
+          >
+            <Image
+              src={item.src}
+              alt=""
+              aria-hidden="true"
+              width={190}
+              height={238}
+              className="h-full w-full object-cover"
+              sizes="130px"
+            />
+          </span>
+        ))}
+      </div>
       <Image
         src="/images/glenn-portrait.png"
         alt="Glenn Wee"

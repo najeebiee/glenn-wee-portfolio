@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollLine from "@/components/ScrollLine";
+import useMediaQuery from "@/components/useMediaQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -158,6 +159,7 @@ export default function StoryStepper() {
   const [hasEntered, setHasEntered] = useState(false);
   const [quoteHasEntered, setQuoteHasEntered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const isMobileViewport = useMediaQuery("(max-width: 767.98px)");
   const activeStep = storySteps[activeIndex];
 
   useEffect(() => {
@@ -172,7 +174,7 @@ export default function StoryStepper() {
 
   useGSAP(
     () => {
-      if (reducedMotion || !sectionRef.current || !pinRef.current) {
+      if (reducedMotion || isMobileViewport || !sectionRef.current || !pinRef.current) {
         return;
       }
 
@@ -225,7 +227,7 @@ export default function StoryStepper() {
         trigger.kill();
       };
     },
-    { dependencies: [reducedMotion], scope: sectionRef }
+    { dependencies: [isMobileViewport, reducedMotion], scope: sectionRef }
   );
 
   useGSAP(
@@ -248,35 +250,35 @@ export default function StoryStepper() {
       if (contentRef.current) {
         gsap.fromTo(
           contentRef.current,
-          { autoAlpha: 0, xPercent: -50, y: 28 },
-          { autoAlpha: 1, xPercent: -50, y: 0, duration: 0.95, ease: "power2.out" }
+          { autoAlpha: 0, y: 28 },
+          { autoAlpha: 1, y: 0, duration: 0.95, ease: "power2.out" }
         );
       }
     },
     { dependencies: [activeIndex, hasEntered, reducedMotion], scope: sectionRef }
   );
 
-  if (reducedMotion) {
+  if (reducedMotion || isMobileViewport) {
     return (
       <section
         ref={sectionRef}
-        className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-ink text-white"
+        className="story-stepper-section story-stepper-static scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-ink text-white"
       >
-        <div className="scroll-line-host relative border-b border-white/55 px-[81px] py-[72px]">
-          <div className="absolute right-[96px] top-[92px]">
+        <div className="story-stepper-static-panel scroll-line-host relative border-b border-white/55 px-[81px] py-[72px]">
+          <div className="story-stepper-static-icon absolute right-[96px] top-[92px]">
             <StoryIcon src={storySteps[0].icon} />
           </div>
-          <div className="grid gap-12 pr-[220px]">
+          <div className="story-stepper-static-list grid gap-12 pr-[220px]">
             {storySteps.map((step) => (
-              <article key={step.number} className="grid grid-cols-[160px_1fr] gap-20">
-                <span className="font-manrope text-[120px] font-medium leading-none">
+              <article key={step.number} className="story-stepper-static-item grid grid-cols-[160px_1fr] gap-20">
+                <span className="story-stepper-static-number font-manrope text-[120px] font-medium leading-none">
                   {step.number}
                 </span>
                 <div>
-                  <h2 className="font-manrope text-[52px] font-semibold leading-tight">
+                  <h2 className="story-stepper-static-title font-manrope text-[52px] font-semibold leading-tight">
                     {step.title}
                   </h2>
-                  <p className="mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
+                  <p className="story-stepper-static-body mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
                     {step.bodyLines.join(" ")}
                   </p>
                 </div>
@@ -294,38 +296,38 @@ export default function StoryStepper() {
     <section
       ref={sectionRef}
       data-rail-pause="story"
-      className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-paper text-ink"
+      className="story-stepper-section scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-paper text-ink"
     >
       <div
         ref={pinRef}
-        className="h-[1080px] bg-paper"
+        className="story-stepper-pin h-[1080px] bg-paper"
       >
         <div
-        className="relative h-[642px] overflow-hidden bg-ink text-white"
+        className="story-stepper-panel relative h-[642px] overflow-hidden bg-ink text-white"
       >
         <ScrollLine direction="x" light className="bottom-0 left-[60px] right-[60px]" />
         <div className="absolute inset-x-[60px] bottom-0 h-px bg-white/55" />
         <p
           ref={numberRef}
-          className="absolute left-[81px] top-[72px] font-manrope text-[165px] font-medium leading-none"
+          className="story-stepper-number absolute left-[81px] top-[72px] font-manrope text-[165px] font-medium leading-none"
         >
           {activeStep.number}
         </p>
 
-        <div ref={iconRef} className="absolute right-[112px] top-[82px] text-white">
+        <div ref={iconRef} className="story-stepper-icon absolute right-[112px] top-[82px] text-white">
           <StoryIcon src={activeStep.icon} />
         </div>
 
         <div
           ref={contentRef}
-          className={`absolute left-1/2 top-[92px] h-[270px] w-[880px] -translate-x-1/2 text-center ${
+          className={`story-stepper-content absolute left-1/2 top-[92px] h-[270px] w-[880px] -translate-x-1/2 text-center ${
             hasEntered ? "is-visible" : ""
           }`}
         >
-          <h2 className="absolute inset-x-0 top-0 font-manrope text-[64px] font-semibold leading-[1.08]">
+          <h2 className="story-stepper-title absolute inset-x-0 top-0 font-manrope text-[64px] font-semibold leading-[1.08]">
             <SplitStoryTitle text={activeStep.title} />
           </h2>
-          <p className="absolute inset-x-0 top-[184px] mx-auto max-w-[760px] font-satoshi text-[32px] leading-[1.35]">
+          <p className="story-stepper-body absolute inset-x-0 top-[184px] mx-auto max-w-[760px] font-satoshi text-[32px] leading-[1.35]">
             {activeStep.bodyLines.map((line, index) => (
               <span
                 key={`${activeStep.number}-${line}`}
@@ -342,11 +344,11 @@ export default function StoryStepper() {
           </p>
         </div>
 
-        <div className="absolute left-1/2 top-[440px] -translate-x-1/2 text-white">
+        <div className="story-stepper-arrow absolute left-1/2 top-[440px] -translate-x-1/2 text-white">
           <DownArrow />
         </div>
 
-        <div className="absolute left-1/2 top-[606px] h-[2px] w-[300px] -translate-x-1/2 bg-white/45">
+        <div className="story-stepper-progress absolute left-1/2 top-[606px] h-[2px] w-[300px] -translate-x-1/2 bg-white/45">
           <div ref={progressRef} className="h-full origin-left scale-x-[0.02] bg-white" />
         </div>
       </div>
@@ -363,15 +365,15 @@ const quoteText =
 const QuoteBlock = forwardRef<HTMLDivElement, { quoteHasEntered?: boolean }>(
   function QuoteBlock({ quoteHasEntered = false }, ref) {
   return (
-    <div ref={ref} className="relative h-[438px] bg-paper text-ink">
-      <p
-        aria-hidden="true"
-        className="absolute left-[268px] top-[46px] font-manrope text-[320px] font-semibold leading-none"
-      >
-        &ldquo;
-      </p>
-      <blockquote className="absolute left-[399px] top-[124px] w-[1066px]">
-        <p className="font-manrope text-[48px] font-semibold leading-[1.38]">
+    <div ref={ref} className="quote-panel relative h-[438px] bg-paper text-ink">
+      <blockquote className="quote-block absolute left-[399px] top-[124px] w-[1066px]">
+        <p
+          aria-hidden="true"
+          className="quote-mark absolute left-0 top-[-78px] font-manrope text-[320px] font-semibold leading-none"
+        >
+          &ldquo;
+        </p>
+        <p className="quote-text font-manrope text-[48px] font-semibold leading-[1.38]">
           <SplitQuoteText text={quoteText} isActive={quoteHasEntered} />
         </p>
         <footer className="mt-[33px] flex items-center gap-6">
@@ -380,7 +382,7 @@ const QuoteBlock = forwardRef<HTMLDivElement, { quoteHasEntered?: boolean }>(
               src="/images/glenn-portrait.png"
               alt="Glenn Wee"
               fill
-              className="object-cover object-top"
+              className="scale-125 object-cover object-top"
               sizes="56px"
             />
           </div>

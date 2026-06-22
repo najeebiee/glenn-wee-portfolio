@@ -61,6 +61,8 @@ function SplitFooterHeadingLine({
 
 export default function FooterSection() {
   const footerRef = useRef<HTMLElement | null>(null);
+  const wordmarkFrameRef = useRef<HTMLDivElement | null>(null);
+  const wordmarkTextRef = useRef<HTMLSpanElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -86,6 +88,40 @@ export default function FooterSection() {
     }
 
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const frame = wordmarkFrameRef.current;
+    const text = wordmarkTextRef.current;
+
+    if (!frame || !text) {
+      return;
+    }
+
+    const updateWordmarkScale = () => {
+      const frameWidth = frame.clientWidth;
+      const textWidth = text.scrollWidth;
+
+      if (!frameWidth || !textWidth) {
+        return;
+      }
+
+      const scale = Math.min(1, Math.max(0.1, (frameWidth - 2) / textWidth));
+      frame.style.setProperty("--footer-wordmark-scale", scale.toFixed(4));
+    };
+
+    updateWordmarkScale();
+
+    const resizeObserver = new ResizeObserver(updateWordmarkScale);
+    resizeObserver.observe(frame);
+    resizeObserver.observe(text);
+    window.addEventListener("resize", updateWordmarkScale);
+    void document.fonts?.ready.then(updateWordmarkScale);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateWordmarkScale);
+    };
   }, []);
 
   return (
@@ -163,9 +199,15 @@ export default function FooterSection() {
       </div>
 
       <div className="grid h-[713px] min-w-0 grid-rows-[1fr_74px] overflow-hidden">
-        <div className="relative overflow-hidden">
+        <div
+          ref={wordmarkFrameRef}
+          className="relative overflow-hidden"
+          style={{ "--footer-wordmark-scale": 1 } as CSSProperties}
+        >
           <p className="footer-wordmark absolute left-[10px] top-[56px] whitespace-nowrap font-manrope text-[321px] font-semibold leading-none tracking-normal">
-            GLENN WEE
+            <span ref={wordmarkTextRef} className="footer-wordmark-inner">
+              GLENN WEE
+            </span>
           </p>
 
           <div className="footer-marquee-mask footer-marquee-reveal absolute bottom-[24px] left-0 right-0 flex h-[86px] items-center overflow-hidden">

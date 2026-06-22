@@ -6,9 +6,9 @@ import gsap from "gsap";
 
 const navItems = [
   { label: "About", href: "#about", id: "about" },
+  { label: "Who I Help", href: "#clients", id: "clients" },
   { label: "Services", href: "#services", id: "services" },
   { label: "Approach", href: "#approach", id: "approach" },
-  { label: "Who I Help", href: "#clients", id: "clients" },
   { label: "Contact", href: "#contact", id: "contact" },
 ];
 
@@ -57,8 +57,11 @@ function SplitNavbarText({
 export default function Navbar() {
   const headerRef = useRef<HTMLElement | null>(null);
   const lastScrollYRef = useRef(0);
+  const directionStartScrollYRef = useRef(0);
+  const lastDirectionRef = useRef<"down" | "up" | null>(null);
   const [activeId, setActiveId] = useState("");
   const [isHidden, setIsHidden] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -129,16 +132,29 @@ export default function Navbar() {
     const onScroll = () => {
       const currentScrollY = window.scrollY;
       const delta = currentScrollY - lastScrollYRef.current;
+      const direction = delta > 0 ? "down" : delta < 0 ? "up" : null;
 
       setIsScrolled(currentScrollY > 12);
 
-      if (!reducedMotion) {
+      if (!reducedMotion && !isMenuOpen) {
         if (currentScrollY <= 12) {
           setIsHidden(false);
-        } else if (currentScrollY > 120 && delta > 8) {
-          setIsHidden(true);
-        } else if (delta < -8) {
-          setIsHidden(false);
+          directionStartScrollYRef.current = currentScrollY;
+          lastDirectionRef.current = null;
+        } else if (direction) {
+          if (direction !== lastDirectionRef.current) {
+            directionStartScrollYRef.current = lastScrollYRef.current;
+            lastDirectionRef.current = direction;
+          }
+
+          const directionalDelta =
+            currentScrollY - directionStartScrollYRef.current;
+
+          if (currentScrollY > 120 && directionalDelta > 8) {
+            setIsHidden(true);
+          } else if (directionalDelta < -8) {
+            setIsHidden(false);
+          }
         }
       }
 
@@ -146,12 +162,14 @@ export default function Navbar() {
     };
 
     lastScrollYRef.current = window.scrollY;
+    directionStartScrollYRef.current = window.scrollY;
+    lastDirectionRef.current = null;
     onScroll();
 
     window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => window.removeEventListener("scroll", onScroll);
-  }, [reducedMotion]);
+  }, [isMenuOpen, reducedMotion]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -179,9 +197,57 @@ export default function Navbar() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return;
+    }
+
+    document.body.classList.add("has-tablet-menu-open");
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.classList.remove("has-tablet-menu-open");
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    const tabletQuery = window.matchMedia(
+      "(min-width: 768px) and (max-width: 1023.98px)"
+    );
+    const syncTabletMenu = () => {
+      if (!tabletQuery.matches) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    syncTabletMenu();
+    tabletQuery.addEventListener("change", syncTabletMenu);
+
+    return () => tabletQuery.removeEventListener("change", syncTabletMenu);
+  }, []);
+
   const keepVisible = () => {
     setIsHidden(false);
+    setIsMenuOpen(false);
     lastScrollYRef.current = window.scrollY;
+    directionStartScrollYRef.current = window.scrollY;
+    lastDirectionRef.current = null;
+  };
+
+  const toggleTabletMenu = () => {
+    setIsHidden(false);
+    lastScrollYRef.current = window.scrollY;
+    directionStartScrollYRef.current = window.scrollY;
+    lastDirectionRef.current = null;
+    setIsMenuOpen((current) => !current);
   };
 
   return (
@@ -189,7 +255,9 @@ export default function Navbar() {
       ref={headerRef}
       className={`site-header scroll-line-host relative mx-auto grid h-[74px] max-w-[1800px] grid-cols-[1fr_auto_1fr] items-center border-x border-b border-line px-5 ${
         isHidden ? "is-hidden" : ""
-      } ${isScrolled ? "is-scrolled" : ""}`}
+      } ${isScrolled ? "is-scrolled" : ""} ${
+        isMenuOpen ? "has-menu-open" : ""
+      }`}
     >
       <a
         className="nav-brand split-text font-manrope text-[24px] font-semibold tracking-normal"
@@ -210,7 +278,7 @@ export default function Navbar() {
           </a>
         ))}
       </nav>
-      <div className="justify-self-end">
+      <div className="navbar-cta justify-self-end">
         <a
           className="cta-button cta-button-dark rounded-full bg-ink px-8 py-4 font-manrope text-[16px] font-medium text-white"
           href="#contact"
@@ -219,6 +287,61 @@ export default function Navbar() {
           <span>Book a Consultation</span>
         </a>
       </div>
+      <button
+        aria-controls="tablet-navbar-menu"
+        aria-expanded={isMenuOpen}
+        aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+        className="tablet-menu-button"
+        type="button"
+        onClick={toggleTabletMenu}
+      >
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+      </button>
+      {isMenuOpen ? (
+        <div className="tablet-menu-panel" id="tablet-navbar-menu">
+          <nav aria-label="Tablet navigation" className="tablet-menu-nav">
+            {navItems.map((item, index) => (
+              <a
+                key={item.id}
+                className={`nav-link tablet-menu-link ${
+                  activeId === item.id ? "is-active" : ""
+                }`}
+                href={item.href}
+                onClick={keepVisible}
+                style={
+                  {
+                    "--menu-item-delay": `${
+                      120 + (navItems.length - index) * 70
+                    }ms`,
+                  } as CSSProperties
+                }
+              >
+                <span>{item.label}</span>
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  className="tablet-menu-arrow"
+                  src="/icons/arrow-right-svgrepo-com.svg"
+                />
+              </a>
+            ))}
+            <a
+              className="cta-button cta-button-dark tablet-menu-cta rounded-full bg-ink font-manrope font-medium text-white"
+              href="#contact"
+              onClick={keepVisible}
+              style={
+                {
+                  "--menu-item-delay": "120ms",
+                } as CSSProperties
+              }
+            >
+              <span>Book a Consultation</span>
+            </a>
+          </nav>
+        </div>
+      ) : null}
       <span
         aria-hidden="true"
         className="navbar-frame-line navbar-frame-line-y left-0"

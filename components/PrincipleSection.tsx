@@ -90,7 +90,7 @@ export default function PrincipleSection() {
     >
       <ScrollLine direction="x" light className="left-0 right-0 top-0" />
       <ScrollLine direction="x" light className="bottom-0 left-0 right-0" />
-      <p className="px-24 py-20 text-[34px] leading-[1.35] tracking-[-0.04em]">
+      <p className="relative flex flex-col justify-center px-24 py-20 text-[34px] leading-[1.35] tracking-[-0.04em]">
         <span
           className="principle-line"
           style={{ "--line-delay": "0ms" } as CSSProperties}
@@ -109,6 +109,12 @@ export default function PrincipleSection() {
         >
           and adapt as life changes.
         </span>
+        <ScrollLine
+          completeOnEnter
+          direction="x"
+          light
+          className="principle-row-divider bottom-0 left-0 right-0"
+        />
       </p>
       {principles.map(([number, title, body], index) => {
         const cardDelay = 280 + index * 160;

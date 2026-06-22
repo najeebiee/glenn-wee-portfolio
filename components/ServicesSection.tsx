@@ -289,15 +289,15 @@ export default function ServicesSection() {
           bottomVisible ? "is-visible" : ""
         }`}
       >
-        <p className="services-kicker absolute left-5 top-[85px] font-satoshi text-[24px] font-medium leading-none">
+        <p className="services-kicker absolute left-10 top-[74px] font-satoshi text-[24px] font-medium leading-none">
           Services :
         </p>
 
-        <h2 className="absolute left-[667px] top-[63px] w-[970px] font-manrope text-[64px] font-semibold leading-[1.36] tracking-normal">
+        <h2 className="absolute left-[600px] top-[63px] w-[970px] font-manrope text-[64px] font-semibold leading-[1.36] tracking-normal">
           <SplitServiceHeading text="Advice grounded in the full financial picture." />
         </h2>
 
-        <div className="absolute left-[667px] top-[274px] grid w-[1031px] grid-cols-3 gap-x-[63px] gap-y-[30px]">
+        <div className="absolute left-[600px] top-[274px] grid w-[1031px] grid-cols-3 gap-x-[63px] gap-y-[30px]">
           {services.map((service, index) => (
             <article
               key={service.number}

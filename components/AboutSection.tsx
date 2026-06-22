@@ -11,6 +11,13 @@ const storyLines = [
   "The reason I stayed is very different.",
 ];
 
+const tabletStoryLines = [
+  "I did not enter financial advisory",
+  "because I loved selling products.",
+  "I entered for income scalability.",
+  "The reason I stayed is very different.",
+];
+
 export default function AboutSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -62,13 +69,24 @@ export default function AboutSection() {
           className="about-arrow absolute left-5 top-[202px] h-[50px] w-[50px] object-contain"
         />
 
-        <div className="absolute left-[667px] top-[91px] w-[950px]">
-          <h2 className="font-manrope text-[40px] font-bold leading-[1.375] tracking-normal">
+        <div className="about-story-copy absolute left-[667px] top-[91px] w-[950px]">
+          <h2 className="about-story-heading-default font-manrope text-[40px] font-bold leading-[1.375] tracking-normal">
             {storyLines.map((line, index) => (
               <span
                 key={line}
                 className="about-story-line"
                 style={{ "--about-line-delay": `${360 + index * 420}ms` } as CSSProperties}
+              >
+                {line}
+              </span>
+            ))}
+          </h2>
+          <h2 className="about-story-heading-tablet font-manrope text-[40px] font-bold leading-[1.375] tracking-normal">
+            {tabletStoryLines.map((line, index) => (
+              <span
+                key={line}
+                className="about-story-line"
+                style={{ "--about-line-delay": `${360 + index * 220}ms` } as CSSProperties}
               >
                 {line}
               </span>

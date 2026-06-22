@@ -56,9 +56,18 @@ export default function PageFrameLines() {
     };
 
     updateRails();
+    let introFrame = 0;
+    const animateIntro = () => {
+      updateRails();
+
+      if (Date.now() - introStartRef.current <= introDuration + 160) {
+        introFrame = window.requestAnimationFrame(animateIntro);
+      }
+    };
+
+    introFrame = window.requestAnimationFrame(animateIntro);
     window.addEventListener("scroll", updateRails, { passive: true });
     window.addEventListener("resize", updateRails);
-    const updateTimer = window.setInterval(updateRails, 80);
 
     const refreshTimer = window.setTimeout(() => {
       ScrollTrigger.refresh();
@@ -72,7 +81,7 @@ export default function PageFrameLines() {
     return () => {
       window.clearTimeout(refreshTimer);
       window.clearTimeout(lateRefreshTimer);
-      window.clearInterval(updateTimer);
+      window.cancelAnimationFrame(introFrame);
       window.removeEventListener("scroll", updateRails);
       window.removeEventListener("resize", updateRails);
     };

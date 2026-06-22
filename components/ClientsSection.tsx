@@ -5,12 +5,32 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import ScrollLine from "@/components/ScrollLine";
 
-const clientGroups = [
+type ClientGroup = {
+  title: string;
+  bodyLines: string[];
+  compactBodyLines?: string[];
+  tabletBodyLines?: string[];
+  cta: string;
+  image: string;
+  alt: string;
+  icon: string;
+  iconClassName: string;
+};
+
+const clientGroups: ClientGroup[] = [
   {
     title: "Professionals",
     bodyLines: [
       "Build a strong foundation while your income, responsibilities,",
       "and ambitions grow.",
+    ],
+    compactBodyLines: [
+      "Build a strong foundation while your income,",
+      "responsibilities, and ambitions grow.",
+    ],
+    tabletBodyLines: [
+      "Build a strong foundation while your income,",
+      "responsibilities, and ambitions grow.",
     ],
     cta: "Build Now",
     image:
@@ -25,6 +45,14 @@ const clientGroups = [
       "Protect the people who matter while building toward your",
       "family's next milestones.",
     ],
+    compactBodyLines: [
+      "Protect the people who matter,",
+      "while building toward your family's next milestones.",
+    ],
+    tabletBodyLines: [
+      "Protect the people who matter while building",
+      "toward your family's next milestones.",
+    ],
     cta: "Protect Now",
     image:
       "https://images.pexels.com/photos/9300262/pexels-photo-9300262.jpeg?auto=compress&cs=tinysrgb&w=930&h=912&fit=crop",
@@ -37,6 +65,14 @@ const clientGroups = [
     bodyLines: [
       "Create resilience through measured risk, sustainable coverage,",
       "and practical planning.",
+    ],
+    compactBodyLines: [
+      "Create resilience through measured risk,",
+      "sustainable coverage, and practical planning.",
+    ],
+    tabletBodyLines: [
+      "Create resilience through measured risk,",
+      "sustainable coverage, and practical planning.",
     ],
     cta: "Create Now",
     image:
@@ -246,13 +282,21 @@ export default function ClientsSection() {
           >
             {index > 0 ? (
               <ScrollLine
+                className="client-column-divider bottom-0 left-0 top-0"
                 direction="y"
-                end="bottom 45%"
-                scrub={0.8}
-                start="top 98%"
+                end="bottom 78%"
+                scrub={0.25}
+                start="top 94%"
                 startScale={0}
                 triggerParent
-                className="bottom-0 left-0 top-0"
+              />
+            ) : null}
+            {index > 0 ? (
+              <ScrollLine
+                className="client-row-divider left-0 right-0 top-0"
+                direction="x"
+                startScale={0}
+                triggerParent
               />
             ) : null}
             <div
@@ -273,25 +317,60 @@ export default function ClientsSection() {
               ref={index === 0 ? textsRef : undefined}
               className={`clients-texts ${textsVisible ? "is-visible" : ""}`}
             >
-              <h3 className="mt-[42px] font-manrope text-[24px] font-semibold leading-none">
-                <SplitClientTitle text={group.title} delay={index * 140} />
-              </h3>
-              <p className="mt-[22px] max-w-[465px] font-satoshi text-[16px] font-medium leading-[1.38]">
-                {group.bodyLines.map((line, lineIndex) => (
-                  <span
-                    key={`${group.title}-${line}`}
-                    className="client-body-line"
-                    style={
-                      {
-                        "--body-delay": `${420 + index * 140 + lineIndex * 120}ms`,
-                      } as CSSProperties
-                    }
-                  >
-                    {line}
-                  </span>
-                ))}
-              </p>
-
+              <div className="client-copy">
+                <h3 className="mt-[42px] font-manrope text-[24px] font-semibold leading-none">
+                  <SplitClientTitle text={group.title} delay={index * 140} />
+                </h3>
+                <p className="client-body-copy client-body-copy-default mt-[22px] max-w-[465px] font-satoshi text-[16px] font-medium leading-[1.38]">
+                  {group.bodyLines.map((line, lineIndex) => (
+                    <span
+                      key={`${group.title}-${line}`}
+                      className="client-body-line"
+                      style={
+                        {
+                          "--body-delay": `${420 + index * 140 + lineIndex * 120}ms`,
+                        } as CSSProperties
+                      }
+                    >
+                      {line}
+                    </span>
+                  ))}
+                </p>
+                {group.compactBodyLines ? (
+                  <p className="client-body-copy client-body-copy-compact mt-[22px] max-w-[465px] font-satoshi text-[16px] font-medium leading-[1.38]">
+                    {group.compactBodyLines.map((line, lineIndex) => (
+                      <span
+                        key={`${group.title}-compact-${line}`}
+                        className="client-body-line"
+                        style={
+                          {
+                            "--body-delay": `${420 + index * 140 + lineIndex * 120}ms`,
+                          } as CSSProperties
+                        }
+                      >
+                        {line}
+                      </span>
+                    ))}
+                  </p>
+                ) : null}
+                {group.tabletBodyLines ? (
+                  <p className="client-body-copy client-body-copy-tablet mt-[22px] max-w-[465px] font-satoshi text-[16px] font-medium leading-[1.38]">
+                    {group.tabletBodyLines.map((line, lineIndex) => (
+                      <span
+                        key={`${group.title}-tablet-${line}`}
+                        className="client-body-line"
+                        style={
+                          {
+                            "--body-delay": `${420 + index * 140 + lineIndex * 120}ms`,
+                          } as CSSProperties
+                        }
+                      >
+                        {line}
+                      </span>
+                    ))}
+                  </p>
+                ) : null}
+              </div>
               <a
                 href="#contact"
                 className="invert-hover-button absolute bottom-[22px] inline-flex h-[58px] items-center gap-3 rounded-full border border-line px-[18px] font-manrope text-[16px] font-semibold"

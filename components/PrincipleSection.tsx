@@ -92,20 +92,44 @@ export default function PrincipleSection() {
       <ScrollLine direction="x" light className="bottom-0 left-0 right-0" />
       <p className="relative flex flex-col justify-center px-24 py-20 text-[34px] leading-[1.35] tracking-[-0.04em]">
         <span
-          className="principle-line"
+          className="principle-line principle-line-default"
           style={{ "--line-delay": "0ms" } as CSSProperties}
         >
           A good financial plan should fit your
         </span>
         <span
-          className="principle-line"
+          className="principle-line principle-line-default"
           style={{ "--line-delay": "140ms" } as CSSProperties}
         >
           lifestyle, protect you from setbacks,
         </span>
         <span
-          className="principle-line"
+          className="principle-line principle-line-default"
           style={{ "--line-delay": "280ms" } as CSSProperties}
+        >
+          and adapt as life changes.
+        </span>
+        <span
+          className="principle-line principle-line-478"
+          style={{ "--line-delay": "0ms" } as CSSProperties}
+        >
+          A good financial plan
+        </span>
+        <span
+          className="principle-line principle-line-478"
+          style={{ "--line-delay": "140ms" } as CSSProperties}
+        >
+          should fit your lifestyle,
+        </span>
+        <span
+          className="principle-line principle-line-478"
+          style={{ "--line-delay": "280ms" } as CSSProperties}
+        >
+          protect you from setbacks,
+        </span>
+        <span
+          className="principle-line principle-line-478"
+          style={{ "--line-delay": "420ms" } as CSSProperties}
         >
           and adapt as life changes.
         </span>
@@ -133,8 +157,16 @@ export default function PrincipleSection() {
               start="top 98%"
               startScale={0}
               triggerParent
-              className="bottom-0 left-0 top-0"
+              className="principle-card-vertical-line bottom-0 left-0 top-0"
             />
+            {index < 2 ? (
+              <ScrollLine
+                completeOnEnter
+                direction="x"
+                light
+                className="principle-card-row-divider bottom-0 left-0 right-0"
+              />
+            ) : null}
             <span className="principle-card-number text-[16px]">{number}</span>
             <h2 className="mt-20 text-[24px] font-semibold tracking-[-0.04em]">
               <AnimatedTitle text={title} delay={cardDelay + 180} />

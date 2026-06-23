@@ -371,25 +371,101 @@ export default function HeroSection() {
             />
           </h1>
           <p className="mt-[36px] max-w-[845px] font-satoshi text-[24px] font-medium leading-[1.35] tracking-normal">
-            <span
-              className="soft-text-line"
-              style={
-                {
-                  "--text-reveal-delay": "1520ms",
-                } as CSSProperties
-              }
-            >
-              Mathematically sound, behaviourally practical financial structures
+            <span className="hero-copy-default">
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1520ms",
+                  } as CSSProperties
+                }
+              >
+                Mathematically sound, behaviourally practical financial structures
+              </span>
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1660ms",
+                  } as CSSProperties
+                }
+              >
+                designed to protect your progress and adapt as life changes.
+              </span>
             </span>
-            <span
-              className="soft-text-line"
-              style={
-                {
-                  "--text-reveal-delay": "1660ms",
-                } as CSSProperties
-              }
-            >
-              designed to protect your progress and adapt as life changes.
+            <span className="hero-copy-581">
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1520ms",
+                  } as CSSProperties
+                }
+              >
+                Mathematically sound, behaviourally practical
+              </span>
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1660ms",
+                  } as CSSProperties
+                }
+              >
+                financial structures designed to protect your
+              </span>
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1800ms",
+                  } as CSSProperties
+                }
+              >
+                progress and adapt as life changes.
+              </span>
+            </span>
+            <span className="hero-copy-420">
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1520ms",
+                  } as CSSProperties
+                }
+              >
+                Mathematically sound, behaviourally
+              </span>
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1660ms",
+                  } as CSSProperties
+                }
+              >
+                practical financial structures
+              </span>
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1800ms",
+                  } as CSSProperties
+                }
+              >
+                designed to protect your progress
+              </span>
+              <span
+                className="soft-text-line"
+                style={
+                  {
+                    "--text-reveal-delay": "1940ms",
+                  } as CSSProperties
+                }
+              >
+                and adapt as life changes.
+              </span>
             </span>
           </p>
           <ScrollLine direction="x" initialComplete className="bottom-0 left-0 right-0" />

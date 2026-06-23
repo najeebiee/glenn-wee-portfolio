@@ -220,7 +220,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const tabletQuery = window.matchMedia(
-      "(min-width: 768px) and (max-width: 1023.98px)"
+      "(max-width: 1023.98px)"
     );
     const syncTabletMenu = () => {
       if (!tabletQuery.matches) {
@@ -301,7 +301,7 @@ export default function Navbar() {
       </button>
       {isMenuOpen ? (
         <div className="tablet-menu-panel" id="tablet-navbar-menu">
-          <nav aria-label="Tablet navigation" className="tablet-menu-nav">
+          <nav aria-label="Site navigation" className="tablet-menu-nav">
             {navItems.map((item, index) => (
               <a
                 key={item.id}

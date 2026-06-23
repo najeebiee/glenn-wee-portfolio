@@ -27,6 +27,12 @@ const storySteps = [
       "I entered financial advisory for income scalability.",
       "The reason I stayed became something much more meaningful.",
     ],
+    mobileBodyLines: [
+      "I entered financial advisory for",
+      "income scalability.",
+      "The reason I stayed became",
+      "something much more meaningful.",
+    ],
     icon: "/icons/bar-chart-svgrepo-com.svg",
   },
   {
@@ -36,6 +42,13 @@ const storySteps = [
       "In my early twenties, cashflow problems in an",
       "overseas F&B venture exposed the cost of planning",
       "without forecasting, runway, or stress tests.",
+    ],
+    mobileBodyLines: [
+      "In my early twenties, cashflow",
+      "problems in an overseas F&B venture",
+      "exposed the cost of planning",
+      "without forecasting, runway, or",
+      "stress tests.",
     ],
     icon: "/icons/compass-svgrepo-com.svg",
   },
@@ -47,9 +60,18 @@ const storySteps = [
       "factually, manage decisions behaviourally, and build",
       "plans that can withstand real life.",
     ],
+    mobileBodyLines: [
+      "That experience shaped my approach:",
+      "calculate risk factually,",
+      "manage decisions behaviourally,",
+      "and build plans that can withstand",
+      "real life.",
+    ],
     icon: "/icons/shield-checkmark-sharp-svgrepo-com.svg",
   },
 ];
+
+type StoryStep = (typeof storySteps)[number];
 
 function StoryIcon({ src }: { src: string }) {
   return (
@@ -155,6 +177,113 @@ function DownArrow() {
   );
 }
 
+function MobileStaticStoryItem({
+  animate,
+  step,
+}: {
+  animate: boolean;
+  step: StoryStep;
+}) {
+  const itemRef = useRef<HTMLElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const mobileBodyLines = step.mobileBodyLines;
+
+  useEffect(() => {
+    if (!animate || !itemRef.current) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "0px 0px -12% 0px",
+        threshold: 0.22,
+      }
+    );
+
+    observer.observe(itemRef.current);
+
+    return () => observer.disconnect();
+  }, [animate]);
+
+  return (
+    <article
+      ref={itemRef}
+      className={`story-stepper-static-item grid grid-cols-[160px_1fr] gap-20 ${
+        !animate || isVisible ? "is-visible" : ""
+      }`}
+    >
+      <div className="story-stepper-static-mobile-top flex items-start justify-between gap-6">
+        <span className="story-stepper-static-number font-manrope text-[120px] font-medium leading-none">
+          {step.number}
+        </span>
+        <div className="story-stepper-static-icon">
+          <StoryIcon src={step.icon} />
+        </div>
+      </div>
+      <div className="story-stepper-static-copy text-center">
+        <h2 className="story-stepper-static-title font-manrope text-[52px] font-semibold leading-tight">
+          {animate ? <SplitStoryTitle text={step.title} /> : step.title}
+        </h2>
+        <p className="story-stepper-static-body mx-auto mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
+          {animate
+            ? mobileBodyLines.map((line, index) => (
+                <span
+                  key={`${step.number}-${line}`}
+                  className="story-body-line"
+                  style={
+                    {
+                      "--text-reveal-delay": `${260 + index * 180}ms`,
+                    } as CSSProperties
+                  }
+                >
+                  {line}
+                </span>
+              ))
+            : mobileBodyLines.join(" ")}
+        </p>
+      </div>
+    </article>
+  );
+}
+
+function MobileStaticQuoteBlock({ animate }: { animate: boolean }) {
+  const quotePanelRef = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (!animate || !quotePanelRef.current) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "0px 0px -12% 0px",
+        threshold: 0.22,
+      }
+    );
+
+    observer.observe(quotePanelRef.current);
+
+    return () => observer.disconnect();
+  }, [animate]);
+
+  return <QuoteBlock ref={quotePanelRef} quoteHasEntered={!animate || isVisible} />;
+}
+
 export default function StoryStepper() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const pinRef = useRef<HTMLDivElement | null>(null);
@@ -211,7 +340,7 @@ export default function StoryStepper() {
   }, []);
 
   useEffect(() => {
-    if (!storyViewportReady || reducedMotion || isStoryMobile) {
+    if (reducedMotion || (storyViewportReady && isStoryMobile)) {
       killStoryStepperTriggers();
       setActiveIndex(0);
       setHasEntered(false);
@@ -240,6 +369,10 @@ export default function StoryStepper() {
       const quoteEl = quoteRef.current;
 
       gsap.set(quoteEl, { autoAlpha: 0, y: 48 });
+
+      if (sectionEl.getBoundingClientRect().top <= window.innerHeight * 0.75) {
+        setHasEntered(true);
+      }
 
       const entranceTrigger = ScrollTrigger.create({
         id: "story-stepper-entrance",
@@ -332,6 +465,7 @@ export default function StoryStepper() {
 
   if (shouldRenderStatic) {
     const useMobileStaticLayout = storyViewportReady && isStoryMobile;
+    const animateMobileStaticText = useMobileStaticLayout && !reducedMotion;
 
     return (
       <section
@@ -345,48 +479,40 @@ export default function StoryStepper() {
             </div>
           ) : null}
           <div className="story-stepper-static-list grid gap-12 pr-[220px]">
-            {storySteps.map((step) => (
-              <article key={step.number} className="story-stepper-static-item grid grid-cols-[160px_1fr] gap-20">
-                {useMobileStaticLayout ? (
-                  <>
-                    <div className="story-stepper-static-mobile-top flex items-start justify-between gap-6">
-                      <span className="story-stepper-static-number font-manrope text-[120px] font-medium leading-none">
-                        {step.number}
-                      </span>
-                      <div className="story-stepper-static-icon">
-                        <StoryIcon src={step.icon} />
-                      </div>
-                    </div>
-                    <div className="story-stepper-static-copy text-center">
-                      <h2 className="story-stepper-static-title font-manrope text-[52px] font-semibold leading-tight">
-                        {step.title}
-                      </h2>
-                      <p className="story-stepper-static-body mx-auto mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
-                        {step.bodyLines.join(" ")}
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <span className="story-stepper-static-number font-manrope text-[120px] font-medium leading-none">
-                      {step.number}
-                    </span>
-                    <div>
-                      <h2 className="story-stepper-static-title font-manrope text-[52px] font-semibold leading-tight">
-                        {step.title}
-                      </h2>
-                      <p className="story-stepper-static-body mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
-                        {step.bodyLines.join(" ")}
-                      </p>
-                    </div>
-                  </>
-                )}
-              </article>
-            ))}
+            {storySteps.map((step) =>
+              useMobileStaticLayout ? (
+                <MobileStaticStoryItem
+                  key={step.number}
+                  animate={animateMobileStaticText}
+                  step={step}
+                />
+              ) : (
+                <article
+                  key={step.number}
+                  className="story-stepper-static-item grid grid-cols-[160px_1fr] gap-20"
+                >
+                  <span className="story-stepper-static-number font-manrope text-[120px] font-medium leading-none">
+                    {step.number}
+                  </span>
+                  <div>
+                    <h2 className="story-stepper-static-title font-manrope text-[52px] font-semibold leading-tight">
+                      {step.title}
+                    </h2>
+                    <p className="story-stepper-static-body mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
+                      {step.bodyLines.join(" ")}
+                    </p>
+                  </div>
+                </article>
+              )
+            )}
           </div>
           <ScrollLine direction="x" light className="bottom-0 left-0 right-0" />
         </div>
-        <QuoteBlock quoteHasEntered />
+        {useMobileStaticLayout ? (
+          <MobileStaticQuoteBlock animate={animateMobileStaticText} />
+        ) : (
+          <QuoteBlock quoteHasEntered />
+        )}
       </section>
     );
   }

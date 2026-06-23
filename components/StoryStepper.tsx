@@ -7,9 +7,17 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScrollLine from "@/components/ScrollLine";
-import useMediaQuery from "@/components/useMediaQuery";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const STORY_MOBILE_QUERY = "(max-width: 767.98px)";
+const STORY_TRIGGER_IDS = ["story-stepper-entrance", "story-stepper-pin"];
+
+function killStoryStepperTriggers() {
+  ScrollTrigger.getAll()
+    .filter((trigger) => STORY_TRIGGER_IDS.includes(String(trigger.vars.id)))
+    .forEach((trigger) => trigger.kill());
+}
 
 const storySteps = [
   {
@@ -159,8 +167,38 @@ export default function StoryStepper() {
   const [hasEntered, setHasEntered] = useState(false);
   const [quoteHasEntered, setQuoteHasEntered] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const isMobileViewport = useMediaQuery("(max-width: 767.98px)");
+  const [storyViewportReady, setStoryViewportReady] = useState(false);
+  const [isStoryMobile, setIsStoryMobile] = useState(true);
   const activeStep = storySteps[activeIndex];
+  const shouldRenderStatic = reducedMotion || !storyViewportReady || isStoryMobile;
+
+  useEffect(() => {
+    const resetStoryState = () => {
+      killStoryStepperTriggers();
+      setActiveIndex(0);
+      setHasEntered(false);
+      setQuoteHasEntered(false);
+    };
+    const media = window.matchMedia(STORY_MOBILE_QUERY);
+    const syncStoryViewport = () => {
+      const isMobile = media.matches;
+
+      setIsStoryMobile(isMobile);
+      setStoryViewportReady(true);
+
+      if (isMobile) {
+        resetStoryState();
+      }
+    };
+
+    syncStoryViewport();
+    media.addEventListener("change", syncStoryViewport);
+
+    return () => {
+      media.removeEventListener("change", syncStoryViewport);
+      killStoryStepperTriggers();
+    };
+  }, []);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -172,26 +210,51 @@ export default function StoryStepper() {
     return () => media.removeEventListener("change", syncMotionPreference);
   }, []);
 
+  useEffect(() => {
+    if (!storyViewportReady || reducedMotion || isStoryMobile) {
+      killStoryStepperTriggers();
+      setActiveIndex(0);
+      setHasEntered(false);
+      setQuoteHasEntered(false);
+    }
+  }, [isStoryMobile, reducedMotion, storyViewportReady]);
+
   useGSAP(
     () => {
-      if (reducedMotion || isMobileViewport || !sectionRef.current || !pinRef.current) {
+      if (
+        reducedMotion ||
+        !storyViewportReady ||
+        isStoryMobile ||
+        !sectionRef.current ||
+        !pinRef.current ||
+        !progressRef.current ||
+        !quoteRef.current
+      ) {
+        killStoryStepperTriggers();
         return;
       }
 
-      gsap.set(quoteRef.current, { autoAlpha: 0, y: 48 });
+      const sectionEl = sectionRef.current;
+      const pinEl = pinRef.current;
+      const progressEl = progressRef.current;
+      const quoteEl = quoteRef.current;
+
+      gsap.set(quoteEl, { autoAlpha: 0, y: 48 });
 
       const entranceTrigger = ScrollTrigger.create({
-        trigger: sectionRef.current,
+        id: "story-stepper-entrance",
+        trigger: sectionEl,
         start: "top 75%",
         once: true,
         onEnter: () => setHasEntered(true),
       });
 
       const trigger = ScrollTrigger.create({
-        trigger: sectionRef.current,
+        id: "story-stepper-pin",
+        trigger: sectionEl,
         start: "top top",
         end: "+=3800",
-        pin: pinRef.current,
+        pin: pinEl,
         pinSpacing: true,
         scrub: 0.25,
         anticipatePin: 1,
@@ -202,7 +265,7 @@ export default function StoryStepper() {
             Math.floor(storyProgress * storySteps.length)
           );
           setActiveIndex(nextIndex);
-          gsap.to(progressRef.current, {
+          gsap.to(progressEl, {
             scaleX: Math.max(0.02, storyProgress),
             duration: 0.15,
             ease: "none",
@@ -213,7 +276,7 @@ export default function StoryStepper() {
           if (quoteProgress >= 0.65) {
             setQuoteHasEntered(true);
           }
-          gsap.to(quoteRef.current, {
+          gsap.to(quoteEl, {
             autoAlpha: quoteProgress,
             y: 48 - quoteProgress * 48,
             duration: 0.1,
@@ -227,12 +290,12 @@ export default function StoryStepper() {
         trigger.kill();
       };
     },
-    { dependencies: [isMobileViewport, reducedMotion], scope: sectionRef }
+    { dependencies: [isStoryMobile, reducedMotion, storyViewportReady], scope: sectionRef }
   );
 
   useGSAP(
     () => {
-      if (reducedMotion || !hasEntered) {
+      if (reducedMotion || !storyViewportReady || isStoryMobile || !hasEntered) {
         return;
       }
 
@@ -255,33 +318,69 @@ export default function StoryStepper() {
         );
       }
     },
-    { dependencies: [activeIndex, hasEntered, reducedMotion], scope: sectionRef }
+    {
+      dependencies: [
+        activeIndex,
+        hasEntered,
+        isStoryMobile,
+        reducedMotion,
+        storyViewportReady,
+      ],
+      scope: sectionRef,
+    }
   );
 
-  if (reducedMotion || isMobileViewport) {
+  if (shouldRenderStatic) {
+    const useMobileStaticLayout = storyViewportReady && isStoryMobile;
+
     return (
       <section
         ref={sectionRef}
         className="story-stepper-section story-stepper-static scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-ink text-white"
       >
         <div className="story-stepper-static-panel scroll-line-host relative border-b border-white/55 px-[81px] py-[72px]">
-          <div className="story-stepper-static-icon absolute right-[96px] top-[92px]">
-            <StoryIcon src={storySteps[0].icon} />
-          </div>
+          {!useMobileStaticLayout ? (
+            <div className="story-stepper-static-icon absolute right-[96px] top-[92px]">
+              <StoryIcon src={storySteps[0].icon} />
+            </div>
+          ) : null}
           <div className="story-stepper-static-list grid gap-12 pr-[220px]">
             {storySteps.map((step) => (
               <article key={step.number} className="story-stepper-static-item grid grid-cols-[160px_1fr] gap-20">
-                <span className="story-stepper-static-number font-manrope text-[120px] font-medium leading-none">
-                  {step.number}
-                </span>
-                <div>
-                  <h2 className="story-stepper-static-title font-manrope text-[52px] font-semibold leading-tight">
-                    {step.title}
-                  </h2>
-                  <p className="story-stepper-static-body mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
-                    {step.bodyLines.join(" ")}
-                  </p>
-                </div>
+                {useMobileStaticLayout ? (
+                  <>
+                    <div className="story-stepper-static-mobile-top flex items-start justify-between gap-6">
+                      <span className="story-stepper-static-number font-manrope text-[120px] font-medium leading-none">
+                        {step.number}
+                      </span>
+                      <div className="story-stepper-static-icon">
+                        <StoryIcon src={step.icon} />
+                      </div>
+                    </div>
+                    <div className="story-stepper-static-copy text-center">
+                      <h2 className="story-stepper-static-title font-manrope text-[52px] font-semibold leading-tight">
+                        {step.title}
+                      </h2>
+                      <p className="story-stepper-static-body mx-auto mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
+                        {step.bodyLines.join(" ")}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <span className="story-stepper-static-number font-manrope text-[120px] font-medium leading-none">
+                      {step.number}
+                    </span>
+                    <div>
+                      <h2 className="story-stepper-static-title font-manrope text-[52px] font-semibold leading-tight">
+                        {step.title}
+                      </h2>
+                      <p className="story-stepper-static-body mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
+                        {step.bodyLines.join(" ")}
+                      </p>
+                    </div>
+                  </>
+                )}
               </article>
             ))}
           </div>

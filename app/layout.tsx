@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import SiteEntranceProvider from "@/components/SiteEntranceProvider";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+import ThemeProvider from "@/components/ThemeProvider";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -25,6 +26,11 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
+            __html: `(function(){var r=document.documentElement;var k="glenn-wee-theme-v1";var t="paper";try{var s=localStorage.getItem(k);if(s==="paper"||s==="cobalt"||s==="inverse")t=s}catch(e){}r.dataset.theme=t;r.style.colorScheme=t==="inverse"?"dark":"light"})();`,
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
             __html: `(function(){var r=document.documentElement;var k="glenn-wee-site-entrance-v1";var skip=location.hash.length>1||matchMedia("(prefers-reduced-motion: reduce)").matches;try{skip=skip||sessionStorage.getItem(k)==="complete"}catch(e){}r.dataset.siteEntrance=skip?"skip":"run";if(!skip)r.classList.add("site-entrance-active")})();`,
           }}
         />
@@ -33,9 +39,11 @@ export default function RootLayout({
         </noscript>
       </head>
       <body className={manrope.variable} suppressHydrationWarning>
-        <SiteEntranceProvider>
-          <SmoothScrollProvider>{children}</SmoothScrollProvider>
-        </SiteEntranceProvider>
+        <ThemeProvider>
+          <SiteEntranceProvider>
+            <SmoothScrollProvider>{children}</SmoothScrollProvider>
+          </SiteEntranceProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

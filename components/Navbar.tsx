@@ -3,6 +3,10 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useSiteEntrance } from "@/components/SiteEntranceProvider";
+import {
+  DesktopThemeSelector,
+  MobileThemeSelector,
+} from "@/components/ThemeSelector";
 import { WHATSAPP_URL } from "@/lib/contact";
 
 const navItems = [
@@ -12,48 +16,6 @@ const navItems = [
   { label: "Approach", href: "#approach", id: "approach" },
   { label: "Contact", href: "#contact", id: "contact" },
 ];
-
-function SplitNavbarText({
-  text,
-  step = 34,
-}: {
-  text: string;
-  step?: number;
-}) {
-  let charIndex = 0;
-
-  return (
-    <span aria-label={text}>
-      {text.split(" ").map((word, wordIndex, words) => (
-        <span
-          key={`${word}-${wordIndex}`}
-          className="split-word"
-          aria-hidden="true"
-        >
-          {Array.from(word).map((char) => {
-            const currentIndex = charIndex;
-            charIndex += 1;
-
-            return (
-              <span
-                key={`${char}-${currentIndex}`}
-                className="split-char"
-                style={
-                  {
-                    "--char-delay": `${currentIndex * step}ms`,
-                  } as CSSProperties
-                }
-              >
-                {char}
-              </span>
-            );
-          })}
-          {wordIndex < words.length - 1 ? "\u00A0" : null}
-        </span>
-      ))}
-    </span>
-  );
-}
 
 export default function Navbar() {
   const { status } = useSiteEntrance();
@@ -214,14 +176,17 @@ export default function Navbar() {
         isMenuOpen ? "has-menu-open" : ""
       }`}
     >
-      <a
-        data-site-navbar-brand
-        className="nav-brand split-text font-manrope text-[24px] font-semibold tracking-normal"
-        href="#top"
-        onClick={keepVisible}
-      >
-        <SplitNavbarText text="GLENN WEE" />
-      </a>
+      <div className="navbar-brand-cluster">
+        <a
+          data-site-navbar-brand
+          className="nav-brand font-manrope text-[24px] font-semibold tracking-normal"
+          href="#top"
+          onClick={keepVisible}
+        >
+          GLENN WEE
+        </a>
+        <DesktopThemeSelector />
+      </div>
       <nav
         data-navbar-reveal
         className="hidden items-center gap-20 font-satoshi text-[16px] font-medium lg:flex"
@@ -239,7 +204,7 @@ export default function Navbar() {
       </nav>
       <div data-navbar-reveal className="navbar-cta justify-self-end">
         <a
-          className="cta-button cta-button-dark rounded-full bg-ink px-8 py-4 font-manrope text-[16px] font-medium text-white"
+          className="cta-button cta-button-dark rounded-full bg-ink px-8 py-4 font-manrope text-[16px] font-medium text-on-ink"
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
@@ -290,7 +255,7 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              className="cta-button cta-button-dark tablet-menu-cta rounded-full bg-ink font-manrope font-medium text-white"
+              className="cta-button cta-button-dark tablet-menu-cta rounded-full bg-ink font-manrope font-medium text-on-ink"
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
@@ -303,6 +268,7 @@ export default function Navbar() {
             >
               <span>Book a Consultation</span>
             </a>
+            <MobileThemeSelector />
           </nav>
         </div>
       ) : null}

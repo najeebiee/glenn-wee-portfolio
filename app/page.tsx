@@ -11,7 +11,7 @@ import StoryStepper from "@/components/StoryStepper";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-paper text-ink">
+    <main className="relative min-h-screen bg-paper text-primary">
       <PageFrameLines />
       <Navbar />
 

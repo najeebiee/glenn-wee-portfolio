@@ -239,7 +239,7 @@ export default function ServicesSection() {
   return (
     <section
       id="services"
-      className="scroll-line-host relative mx-auto h-[1080px] max-w-[1800px] border-x border-b border-line bg-paper text-ink"
+      className="scroll-line-host relative mx-auto h-[1080px] max-w-[1800px] border-x border-b border-line bg-paper text-primary"
     >
       <ScrollLine direction="x" className="bottom-0 left-0 right-0" />
       <div
@@ -248,7 +248,7 @@ export default function ServicesSection() {
           topVisible ? "is-visible" : ""
         }`}
       >
-        <div className="bg-ink px-5 pt-[85px] text-white">
+        <div className="bg-ink px-5 pt-[85px] text-on-ink">
           <p className="problem-kicker font-satoshi text-[24px] font-medium leading-none">
             The Problem I Solve :
           </p>
@@ -285,7 +285,7 @@ export default function ServicesSection() {
 
       <div
         ref={bottomRef}
-        className={`services-panel relative h-[642px] bg-ink text-white ${
+        className={`services-panel relative h-[642px] bg-ink text-on-ink ${
           bottomVisible ? "is-visible" : ""
         }`}
       >
@@ -314,7 +314,7 @@ export default function ServicesSection() {
                   delay={720 + index * 110}
                 />
               </h3>
-              <p className="mt-[8px] font-satoshi text-[16px] font-medium leading-[1.38] text-white">
+              <p className="mt-[8px] font-satoshi text-[16px] font-medium leading-[1.38] text-on-ink">
                 {service.bodyLines.map((line, lineIndex) => (
                   <span
                     key={`${service.number}-${line}`}

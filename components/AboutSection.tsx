@@ -51,7 +51,7 @@ export default function AboutSection() {
     <section
       id="about"
       ref={sectionRef}
-      className={`about-section scroll-line-host relative mx-auto h-[1080px] max-w-[1800px] border-x border-line bg-paper text-ink ${
+      className={`about-section scroll-line-host relative mx-auto h-[1080px] max-w-[1800px] border-x border-line bg-paper text-primary ${
         isVisible ? "is-visible" : ""
       }`}
     >

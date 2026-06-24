@@ -312,7 +312,7 @@ function HeroPortraitPanel({ entranceReady }: { entranceReady: boolean }) {
   return (
     <div
       ref={panelRef}
-      className="scroll-line-host relative isolate h-[934px] overflow-hidden border-l border-line bg-white"
+      className="scroll-line-host relative isolate h-[934px] overflow-hidden border-l border-line bg-paper"
       onPointerMove={onPointerMove}
     >
       <ScrollLine
@@ -498,7 +498,7 @@ export default function HeroSection() {
             className="hero-arrow-reveal h-[207px] w-full min-w-0 object-fill"
           />
           <a
-            className="cta-button cta-button-dark shrink-0 whitespace-nowrap rounded-full bg-ink px-8 py-5 font-satoshi text-[20px] font-medium text-white"
+            className="cta-button cta-button-dark shrink-0 whitespace-nowrap rounded-full bg-ink px-8 py-5 font-satoshi text-[20px] font-medium text-on-ink"
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"

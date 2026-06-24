@@ -137,7 +137,7 @@ export default function FooterSection() {
     <footer
       id="contact"
       ref={footerRef}
-      className={`footer-section scroll-line-host relative mx-auto h-auto max-w-[1800px] overflow-hidden border-x border-b border-line bg-paper text-ink md:h-[1080px] ${
+      className={`footer-section scroll-line-host relative mx-auto h-auto max-w-[1800px] overflow-hidden border-x border-b border-line bg-paper text-primary md:h-[1080px] ${
         isVisible ? "is-visible" : ""
       }`}
     >

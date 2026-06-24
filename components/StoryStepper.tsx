@@ -192,7 +192,7 @@ function DownArrow() {
       aria-hidden="true"
       width={58}
       height={150}
-      className="h-[150px] w-[58px] object-fill invert"
+      className="theme-icon-on-ink h-[150px] w-[58px] object-fill"
     />
   );
 }
@@ -519,7 +519,7 @@ export default function StoryStepper() {
     return (
       <section
         ref={sectionRef}
-        className="story-stepper-section story-stepper-static scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-ink text-white"
+        className="story-stepper-section story-stepper-static scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-ink text-on-ink"
       >
         <div className="story-stepper-static-panel scroll-line-host relative border-b border-white/55 px-[81px] py-[72px]">
           {!useMobileStaticLayout ? (
@@ -570,17 +570,17 @@ export default function StoryStepper() {
     <section
       ref={sectionRef}
       data-rail-pause="story"
-      className="story-stepper-section scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-paper text-ink"
+      className="story-stepper-section scroll-line-host relative mx-auto max-w-[1800px] border-x border-line bg-paper text-primary"
     >
       <div
         ref={pinRef}
         className="story-stepper-pin h-[1080px] bg-paper"
       >
         <div
-        className="story-stepper-panel relative h-[642px] overflow-hidden bg-ink text-white"
+        className="story-stepper-panel relative h-[642px] overflow-hidden bg-ink text-on-ink"
       >
         <ScrollLine direction="x" light className="bottom-0 left-[60px] right-[60px]" />
-        <div className="absolute inset-x-[60px] bottom-0 h-px bg-white/55" />
+        <div className="absolute inset-x-[60px] bottom-0 h-px bg-on-ink/55" />
         <p
           ref={numberRef}
           className="story-stepper-number absolute left-[81px] top-[72px] font-manrope text-[165px] font-medium leading-none"
@@ -588,7 +588,7 @@ export default function StoryStepper() {
           {activeStep.number}
         </p>
 
-        <div ref={iconRef} className="story-stepper-icon absolute right-[112px] top-[82px] text-white">
+        <div ref={iconRef} className="story-stepper-icon absolute right-[112px] top-[82px] text-on-ink">
           <StoryIcon src={activeStep.icon} />
         </div>
 
@@ -618,12 +618,12 @@ export default function StoryStepper() {
           </p>
         </div>
 
-        <div className="story-stepper-arrow absolute left-1/2 top-[440px] -translate-x-1/2 text-white">
+        <div className="story-stepper-arrow absolute left-1/2 top-[440px] -translate-x-1/2 text-on-ink">
           <DownArrow />
         </div>
 
-        <div className="story-stepper-progress absolute left-1/2 top-[606px] h-[2px] w-[300px] -translate-x-1/2 bg-white/45">
-          <div ref={progressRef} className="h-full origin-left scale-x-[0.02] bg-white" />
+        <div className="story-stepper-progress absolute left-1/2 top-[606px] h-[2px] w-[300px] -translate-x-1/2 bg-on-ink/45">
+          <div ref={progressRef} className="h-full origin-left scale-x-[0.02] bg-on-ink" />
         </div>
       </div>
 
@@ -639,7 +639,7 @@ const quoteText =
 const QuoteBlock = forwardRef<HTMLDivElement, { quoteHasEntered?: boolean }>(
   function QuoteBlock({ quoteHasEntered = false }, ref) {
   return (
-    <div ref={ref} className="quote-panel relative h-[438px] bg-paper text-ink">
+    <div ref={ref} className="quote-panel relative h-[438px] bg-paper text-primary">
       <blockquote className="quote-block absolute left-[399px] top-[124px] w-[1066px]">
         <p
           aria-hidden="true"
@@ -651,7 +651,7 @@ const QuoteBlock = forwardRef<HTMLDivElement, { quoteHasEntered?: boolean }>(
           <SplitQuoteText text={quoteText} isActive={quoteHasEntered} />
         </p>
         <footer className="mt-[33px] flex items-center gap-6">
-          <div className="relative size-14 overflow-hidden rounded-full border border-line bg-white">
+          <div className="relative size-14 overflow-hidden rounded-full border border-line bg-paper">
             <Image
               src="/images/glenn-portrait.png"
               alt="Glenn Wee"

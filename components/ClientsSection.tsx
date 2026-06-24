@@ -92,7 +92,7 @@ function ClientBadge({
   iconClassName: string;
 }) {
   return (
-    <span className="client-badge absolute left-[23px] top-[18px] grid size-[50px] place-items-center rounded-full bg-ink text-white">
+    <span className="client-badge absolute left-[23px] top-[18px] grid size-[50px] place-items-center rounded-full bg-ink text-on-ink">
       <Image
         src={icon}
         alt=""
@@ -254,7 +254,7 @@ export default function ClientsSection() {
     <section
       id="clients"
       ref={sectionRef}
-      className={`clients-section scroll-line-host relative mx-auto h-[1080px] max-w-[1800px] border-x border-y border-line bg-paper text-ink ${
+      className={`clients-section scroll-line-host relative mx-auto h-[1080px] max-w-[1800px] border-x border-y border-line bg-paper text-primary ${
         isVisible ? "is-visible" : ""
       }`}
     >

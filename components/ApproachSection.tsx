@@ -84,13 +84,13 @@ const missionVisionItems = [
       "real-life scenarios.",
     ],
     panelClassName:
-      "relative border-r border-line bg-paper text-ink approach-mv-panel",
+      "relative border-r border-line bg-paper text-primary approach-mv-panel",
     labelClassName:
       "absolute left-[101px] top-[111px] font-satoshi text-[24px] font-medium leading-none",
     headingClassName:
       "absolute left-[378px] top-[96px] w-[433px] font-manrope text-[36px] font-semibold leading-[1.36] tracking-normal",
     boxClassName:
-      "absolute left-[100px] top-[275px] h-[295px] w-[708px] bg-ink px-20 pt-[83px] text-white",
+      "absolute left-[100px] top-[275px] h-[295px] w-[708px] bg-ink px-20 pt-[83px] text-on-ink",
   },
   {
     label: "Vision",
@@ -126,13 +126,13 @@ const missionVisionItems = [
       "rather than simply",
       "focusing on products.",
     ],
-    panelClassName: "relative bg-ink text-white approach-mv-panel",
+    panelClassName: "relative bg-ink text-on-ink approach-mv-panel",
     labelClassName:
       "absolute left-[95px] top-[111px] font-satoshi text-[24px] font-medium leading-none",
     headingClassName:
       "absolute left-[432px] top-[96px] w-[433px] font-manrope text-[36px] font-semibold leading-[1.36] tracking-normal",
     boxClassName:
-      "absolute left-[87px] top-[275px] h-[295px] w-[708px] bg-paper px-20 pt-[83px] text-ink",
+      "absolute left-[87px] top-[275px] h-[295px] w-[708px] bg-paper px-20 pt-[83px] text-primary",
   },
 ];
 
@@ -269,7 +269,7 @@ function ApproachCard({
     <article
       ref={cardRef}
       className={`approach-step-card absolute inset-0 overflow-hidden ${
-        isDark ? "bg-ink text-white" : "bg-paper text-ink"
+        isDark ? "bg-ink text-on-ink" : "bg-paper text-primary"
       } ${isActive ? "is-active" : ""}`}
     >
       <p className="approach-step-number absolute left-4 top-[73px] font-manrope text-[64px] font-semibold leading-none">
@@ -571,7 +571,7 @@ export default function ApproachSection() {
       <section
         id="approach"
         ref={sectionRef}
-        className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-b border-line bg-paper text-ink"
+        className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-b border-line bg-paper text-primary"
       >
         <ScrollLine direction="x" className="bottom-0 left-0 right-0" />
         <div className="scroll-line-host relative grid border-b border-line lg:grid-cols-[45%_55%]">
@@ -593,7 +593,7 @@ export default function ApproachSection() {
               <div
                 key={step.number}
                 className={`approach-stack-step grid grid-cols-[120px_1fr] gap-10 px-4 py-10 ${
-                  index % 2 === 0 ? "bg-ink text-white" : "bg-paper text-ink"
+                  index % 2 === 0 ? "bg-ink text-on-ink" : "bg-paper text-primary"
                 }`}
                 style={{ "--stack-delay": `${index * 120}ms` } as CSSProperties}
               >
@@ -633,7 +633,7 @@ export default function ApproachSection() {
       id="approach"
       ref={sectionRef}
       data-rail-pause="approach"
-      className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-b border-line bg-paper text-ink"
+      className="scroll-line-host relative mx-auto max-w-[1800px] border-x border-b border-line bg-paper text-primary"
     >
       <ScrollLine direction="x" className="bottom-0 left-0 right-0" />
       <div ref={pinRef} className="approach-pin h-[1080px] bg-paper">

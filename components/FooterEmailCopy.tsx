@@ -42,7 +42,7 @@ export default function FooterEmailCopy({ className = "" }: { className?: string
       aria-label={`Copy ${email}`}
     >
       <SplitFooterEmail />
-      <span className="pointer-events-none absolute bottom-full right-0 mb-3 rounded-full bg-ink px-6 py-2 font-satoshi text-[16px] font-bold leading-none text-white opacity-0 shadow-sm transition-all duration-200 group-hover:translate-y-[-2px] group-hover:opacity-100 group-focus-visible:translate-y-[-2px] group-focus-visible:opacity-100">
+      <span className="pointer-events-none absolute bottom-full right-0 mb-3 rounded-full bg-ink px-6 py-2 font-satoshi text-[16px] font-bold leading-none text-on-ink opacity-0 shadow-sm transition-all duration-200 group-hover:translate-y-[-2px] group-hover:opacity-100 group-focus-visible:translate-y-[-2px] group-focus-visible:opacity-100">
         {copied ? "Copied" : "Copy"}
       </span>
     </button>

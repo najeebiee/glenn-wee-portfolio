@@ -84,7 +84,7 @@ export default function PrincipleSection() {
   return (
     <section
       ref={sectionRef}
-      className={`principle-section scroll-line-host relative mx-auto grid max-w-[1800px] grid-cols-[2fr_repeat(3,1fr)] border-x border-y border-line bg-ink text-white ${
+      className={`principle-section scroll-line-host relative mx-auto grid max-w-[1800px] grid-cols-[2fr_repeat(3,1fr)] border-x border-y border-line bg-ink text-on-ink ${
         isVisible ? "is-visible" : ""
       }`}
     >
@@ -172,7 +172,7 @@ export default function PrincipleSection() {
               <AnimatedTitle text={title} delay={cardDelay + 180} />
             </h2>
             <p
-              className="principle-card-body mt-5 max-w-[260px] text-[17px] leading-[1.45] text-white/90"
+              className="principle-card-body mt-5 max-w-[260px] text-[17px] leading-[1.45] text-on-ink/90"
               style={{ "--body-delay": `${cardDelay + 460}ms` } as CSSProperties}
             >
               {body}

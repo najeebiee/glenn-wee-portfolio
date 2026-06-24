@@ -507,9 +507,7 @@ export default function HeroSection() {
           </a>
           <a
             className="cta-button cta-button-outline inline-flex shrink-0 whitespace-nowrap rounded-full border border-line px-8 py-5 font-satoshi text-[20px] font-medium"
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#approach"
           >
             <span>Explore My Approach</span>
             <Image

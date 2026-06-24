@@ -579,8 +579,8 @@ export default function StoryStepper() {
         <div
         className="story-stepper-panel relative h-[642px] overflow-hidden bg-ink text-on-ink"
       >
-        <ScrollLine direction="x" light className="bottom-0 left-[60px] right-[60px]" />
-        <div className="absolute inset-x-[60px] bottom-0 h-px bg-on-ink/55" />
+        <ScrollLine direction="x" light className="bottom-0 left-0 right-0" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-on-ink/55" />
         <p
           ref={numberRef}
           className="story-stepper-number absolute left-[81px] top-[72px] font-manrope text-[165px] font-medium leading-none"

@@ -204,7 +204,7 @@ export default function Navbar() {
       </nav>
       <div data-navbar-reveal className="navbar-cta justify-self-end">
         <a
-          className="cta-button cta-button-dark rounded-full bg-ink px-8 py-4 font-manrope text-[16px] font-medium text-on-ink"
+          className="cta-button cta-button-dark rounded-full px-8 py-4 font-manrope text-[16px] font-medium"
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
@@ -255,7 +255,7 @@ export default function Navbar() {
               </a>
             ))}
             <a
-              className="cta-button cta-button-dark tablet-menu-cta rounded-full bg-ink font-manrope font-medium text-on-ink"
+              className="cta-button cta-button-dark tablet-menu-cta rounded-full font-manrope font-medium"
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"

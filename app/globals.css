@@ -1211,6 +1211,12 @@ a {
   transform: translateY(-2px);
 }
 
+.cta-button-dark {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
 .cta-button-dark:hover,
 .cta-button-dark:focus-visible {
   background-color: var(--surface);
@@ -1254,6 +1260,19 @@ a {
   transform: translateX(8px);
 }
 
+.footer-cta.invert-hover-button {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.footer-cta.invert-hover-button:hover,
+.footer-cta.invert-hover-button:focus-visible {
+  background-color: transparent;
+  border-color: var(--line);
+  color: var(--text);
+}
+
 .email-copy-button {
   border-radius: 8px;
   overflow-wrap: anywhere;
@@ -1285,6 +1304,17 @@ a {
 
 .footer-heading-line {
   display: block;
+}
+
+/* Keep the second desktop heading line ("for real life.") on a single line down
+   to the mobile breakpoint; let the CTA drop below it instead of forcing the
+   text to wrap. */
+.footer-heading-desktop > span:last-child {
+  flex-wrap: wrap;
+}
+
+.footer-heading-desktop > span:last-child .footer-heading-line {
+  white-space: nowrap;
 }
 
 .footer-heading-char,

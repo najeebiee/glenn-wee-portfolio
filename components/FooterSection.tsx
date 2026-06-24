@@ -249,7 +249,7 @@ export default function FooterSection() {
                   {index > 0 ? (
                     <span
                       aria-hidden="true"
-                      className="size-5 rounded-full bg-ink"
+                      className="size-5 rounded-full bg-primary"
                     />
                   ) : null}
                   {item}

@@ -108,7 +108,7 @@ function CredentialMarquee() {
             className="flex shrink-0 items-center gap-4 pr-8"
           >
             <span>{item}</span>
-            <span aria-hidden="true" className="size-2 rounded-full bg-ink" />
+            <span aria-hidden="true" className="size-2 rounded-full bg-primary" />
           </span>
         ))}
       </div>
@@ -498,7 +498,7 @@ export default function HeroSection() {
             className="hero-arrow-reveal h-[207px] w-full min-w-0 object-fill"
           />
           <a
-            className="cta-button cta-button-dark shrink-0 whitespace-nowrap rounded-full bg-ink px-8 py-5 font-satoshi text-[20px] font-medium text-on-ink"
+            className="cta-button cta-button-dark shrink-0 whitespace-nowrap rounded-full px-8 py-5 font-satoshi text-[20px] font-medium"
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"

@@ -59,6 +59,30 @@ const missionVisionItems = [
       "behaviourally practical, and built",
       "to withstand real-life scenarios.",
     ],
+    mobileBodyLines: [
+      "To help people achieve freedom",
+      "without repercussions by designing",
+      "financial structures that are mathematically",
+      "sound, behaviourally practical, and built to",
+      "withstand real-life scenarios.",
+    ],
+    smallBodyLines: [
+      "To help people achieve freedom",
+      "without repercussions by designing",
+      "financial structures that are",
+      "mathematically sound,",
+      "behaviourally practical, and built",
+      "to withstand real-life scenarios.",
+    ],
+    extraSmallBodyLines: [
+      "To help people achieve freedom",
+      "without repercussions by",
+      "designing financial structures",
+      "that are mathematically",
+      "sound, behaviourally practical,",
+      "and built to withstand",
+      "real-life scenarios.",
+    ],
     panelClassName:
       "relative border-r border-line bg-paper text-ink approach-mv-panel",
     labelClassName:
@@ -82,6 +106,25 @@ const missionVisionItems = [
       "and long-term decision quality",
       "rather than simply focusing",
       "on products.",
+    ],
+    mobileBodyLines: [
+      "To place greater emphasis on",
+      "structured thinking, behaviour, and",
+      "long-term decision quality rather",
+      "than simply focusing on products.",
+    ],
+    smallBodyLines: [
+      "To place greater emphasis on",
+      "structured thinking, behaviour, and",
+      "long-term decision quality rather",
+      "than simply focusing on products.",
+    ],
+    extraSmallBodyLines: [
+      "To place greater emphasis on",
+      "structured thinking, behaviour,",
+      "and long-term decision quality",
+      "rather than simply",
+      "focusing on products.",
     ],
     panelClassName: "relative bg-ink text-white approach-mv-panel",
     labelClassName:
@@ -264,6 +307,9 @@ function MissionVision({
   const useCompactBodyLines = useMediaQuery(
     "(min-width: 1024px) and (max-width: 1224px)"
   );
+  const useMobileBodyLines = useMediaQuery("(max-width: 448px)");
+  const useSmallBodyLines = useMediaQuery("(max-width: 397px)");
+  const useExtraSmallBodyLines = useMediaQuery("(max-width: 340px)");
 
   return (
     <div
@@ -273,9 +319,15 @@ function MissionVision({
       }`}
     >
       {missionVisionItems.map((item, index) => {
-        const bodyLines = useCompactBodyLines
-          ? item.compactBodyLines
-          : item.bodyLines;
+        const bodyLines = useExtraSmallBodyLines
+          ? item.extraSmallBodyLines
+          : useSmallBodyLines
+            ? item.smallBodyLines
+            : useMobileBodyLines
+              ? item.mobileBodyLines
+              : useCompactBodyLines
+                ? item.compactBodyLines
+                : item.bodyLines;
 
         return (
           <div
@@ -523,7 +575,7 @@ export default function ApproachSection() {
       >
         <ScrollLine direction="x" className="bottom-0 left-0 right-0" />
         <div className="scroll-line-host relative grid border-b border-line lg:grid-cols-[45%_55%]">
-          <div className="px-5 py-[92px]">
+          <div className="approach-mobile-intro px-5 py-[50px]">
             <p className="font-satoshi text-[24px] font-medium leading-none">
               My Approach :
             </p>
@@ -557,7 +609,10 @@ export default function ApproachSection() {
                       ? step.tabletBodyLines ?? step.bodyLines
                       : step.bodyLines
                     ).map((line) => (
-                      <span key={`${step.number}-${line}`} className="block">
+                      <span
+                        key={`${step.number}-${line}`}
+                        className="approach-stack-body-line block"
+                      >
                         {line}
                       </span>
                     ))}

@@ -4,13 +4,20 @@ import Lenis from "lenis";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useSiteEntrance } from "@/components/SiteEntranceProvider";
 
 export default function SmoothScrollProvider({
   children,
 }: {
   children: ReactNode;
 }) {
+  const { status } = useSiteEntrance();
+
   useEffect(() => {
+    if (status !== "ready") {
+      return;
+    }
+
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     if (media.matches) {
@@ -71,7 +78,7 @@ export default function SmoothScrollProvider({
       lenis.destroy();
       document.documentElement.classList.remove("lenis-active");
     };
-  }, []);
+  }, [status]);
 
   return children;
 }

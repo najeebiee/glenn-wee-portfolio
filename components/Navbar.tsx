@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { useSiteEntrance } from "@/components/SiteEntranceProvider";
 
 const navItems = [
   { label: "About", href: "#about", id: "about" },
@@ -55,6 +55,7 @@ function SplitNavbarText({
 }
 
 export default function Navbar() {
+  const { status } = useSiteEntrance();
   const headerRef = useRef<HTMLElement | null>(null);
   const lastScrollYRef = useRef(0);
   const directionStartScrollYRef = useRef(0);
@@ -78,54 +79,6 @@ export default function Navbar() {
     media.addEventListener("change", syncMotionPreference);
 
     return () => media.removeEventListener("change", syncMotionPreference);
-  }, []);
-
-  useEffect(() => {
-    const header = headerRef.current;
-
-    if (!header) {
-      return;
-    }
-
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const xLine = header.querySelector(".navbar-frame-line-x");
-    const yLines = Array.from(header.querySelectorAll(".navbar-frame-line-y"));
-
-    if (media.matches) {
-      gsap.set(xLine, { scaleX: 1 });
-      gsap.set(yLines, { scaleY: 1 });
-      return;
-    }
-
-    gsap.set(xLine, { scaleX: 0 });
-    gsap.set(yLines, { scaleY: 0 });
-
-    const timeline = gsap.timeline({ delay: 0.12 });
-    timeline.to(yLines, {
-      scaleY: 1,
-      duration: 0.78,
-      ease: "power3.out",
-      stagger: 0.05,
-    });
-    timeline.to(
-      xLine,
-      {
-        scaleX: 1,
-        duration: 0.78,
-        ease: "power3.out",
-      },
-      "<"
-    );
-
-    const completionTimer = window.setTimeout(() => {
-      gsap.set(xLine, { scaleX: 1 });
-      gsap.set(yLines, { scaleY: 1 });
-    }, 1100);
-
-    return () => {
-      window.clearTimeout(completionTimer);
-      timeline.kill();
-    };
   }, []);
 
   useEffect(() => {
@@ -251,20 +204,27 @@ export default function Navbar() {
   return (
     <header
       ref={headerRef}
-      className={`site-header scroll-line-host relative mx-auto grid h-[74px] max-w-[1800px] grid-cols-[1fr_auto_1fr] items-center border-x border-b border-line px-5 ${
+      data-site-navbar
+      className={`site-header ${
+        status === "ready" ? "entrance-ready" : "entrance-waiting"
+      } scroll-line-host relative mx-auto grid h-[74px] max-w-[1800px] grid-cols-[1fr_auto_1fr] items-center border-x border-b border-line px-5 ${
         isHidden ? "is-hidden" : ""
       } ${isScrolled ? "is-scrolled" : ""} ${
         isMenuOpen ? "has-menu-open" : ""
       }`}
     >
       <a
+        data-site-navbar-brand
         className="nav-brand split-text font-manrope text-[24px] font-semibold tracking-normal"
         href="#top"
         onClick={keepVisible}
       >
         <SplitNavbarText text="GLENN WEE" />
       </a>
-      <nav className="hidden items-center gap-20 font-satoshi text-[16px] font-medium lg:flex">
+      <nav
+        data-navbar-reveal
+        className="hidden items-center gap-20 font-satoshi text-[16px] font-medium lg:flex"
+      >
         {navItems.map((item) => (
           <a
             key={item.id}
@@ -276,7 +236,7 @@ export default function Navbar() {
           </a>
         ))}
       </nav>
-      <div className="navbar-cta justify-self-end">
+      <div data-navbar-reveal className="navbar-cta justify-self-end">
         <a
           className="cta-button cta-button-dark rounded-full bg-ink px-8 py-4 font-manrope text-[16px] font-medium text-white"
           href="#contact"
@@ -286,6 +246,7 @@ export default function Navbar() {
         </a>
       </div>
       <button
+        data-navbar-reveal
         aria-controls="tablet-navbar-menu"
         aria-expanded={isMenuOpen}
         aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}

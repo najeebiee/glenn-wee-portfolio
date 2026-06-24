@@ -128,7 +128,7 @@ export default function FooterSection() {
     <footer
       id="contact"
       ref={footerRef}
-      className={`footer-section scroll-line-host relative mx-auto h-[1080px] max-w-[1800px] overflow-hidden border-x border-b border-line bg-paper text-ink ${
+      className={`footer-section scroll-line-host relative mx-auto h-auto max-w-[1800px] overflow-hidden border-x border-b border-line bg-paper text-ink md:h-[1080px] ${
         isVisible ? "is-visible" : ""
       }`}
     >
@@ -140,16 +140,33 @@ export default function FooterSection() {
       <div className="scroll-line-host relative grid h-[367px] grid-cols-[minmax(0,45%)_minmax(0,55%)] border-b border-line">
         <div className="scroll-line-host relative min-w-0 overflow-hidden border-r border-line px-5 pt-[92px]">
           <ScrollLine direction="y" className="bottom-0 right-0 top-0" />
+          <ScrollLine
+            completeOnEnter
+            direction="x"
+            className="footer-mobile-divider hidden bottom-0 left-0 right-0"
+          />
           <p className="footer-reveal footer-copyright font-satoshi text-[24px] font-medium leading-none">
             &copy; 2026 Glenn Wee Financial Advisory
           </p>
           <h2 className="mt-[33px] max-w-[690px] font-manrope text-[64px] font-semibold leading-[1.36] tracking-normal">
-            <SplitFooterHeadingLine text="Build a plan designed" delay={160} />
-            <span className="mt-[1px] flex items-center gap-[40px]">
-              <SplitFooterHeadingLine text="for real life." delay={520} />
+            <span className="footer-heading-desktop">
+              <SplitFooterHeadingLine text="Build a plan designed" delay={160} />
+              <span className="mt-[1px] flex items-center gap-[40px]">
+                <SplitFooterHeadingLine text="for real life." delay={520} />
+                <a
+                  href="mailto:glennweejl@pruadviser.com.sg"
+                  className="footer-cta invert-hover-button inline-flex h-[58px] shrink-0 items-center rounded-full border border-line px-8 font-satoshi text-[20px] font-medium leading-none"
+                >
+                  Book Consultation
+                </a>
+              </span>
+            </span>
+            <span className="footer-heading-mobile hidden">
+              <SplitFooterHeadingLine text="Build a plan" delay={160} />
+              <SplitFooterHeadingLine text="designed for real life." delay={420} />
               <a
                 href="mailto:glennweejl@pruadviser.com.sg"
-                className="footer-cta invert-hover-button inline-flex h-[58px] shrink-0 items-center rounded-full border border-line px-8 font-satoshi text-[20px] font-medium leading-none"
+                className="footer-cta invert-hover-button mt-7 inline-flex h-[58px] shrink-0 items-center rounded-full border border-line px-8 font-satoshi text-[20px] font-medium leading-none"
               >
                 Book Consultation
               </a>

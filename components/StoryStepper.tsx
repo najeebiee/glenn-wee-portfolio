@@ -33,6 +33,12 @@ const storySteps = [
       "The reason I stayed became",
       "something much more meaningful.",
     ],
+    narrowMobileBodyLines: [
+      "I entered financial advisory for",
+      "income scalability.",
+      "The reason I stayed became",
+      "something much more meaningful.",
+    ],
     icon: "/icons/bar-chart-svgrepo-com.svg",
   },
   {
@@ -50,6 +56,13 @@ const storySteps = [
       "without forecasting, runway, or",
       "stress tests.",
     ],
+    narrowMobileBodyLines: [
+      "In my early twenties, cashflow",
+      "problems in an overseas F&B",
+      "venture exposed the cost of",
+      "planning without forecasting,",
+      "runway, or stress tests.",
+    ],
     icon: "/icons/compass-svgrepo-com.svg",
   },
   {
@@ -66,6 +79,13 @@ const storySteps = [
       "manage decisions behaviourally,",
       "and build plans that can withstand",
       "real life.",
+    ],
+    narrowMobileBodyLines: [
+      "That experience shaped my",
+      "approach: calculate risk factually,",
+      "manage decisions behaviourally,",
+      "and build plans that can",
+      "withstand real life.",
     ],
     icon: "/icons/shield-checkmark-sharp-svgrepo-com.svg",
   },
@@ -187,6 +207,7 @@ function MobileStaticStoryItem({
   const itemRef = useRef<HTMLElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const mobileBodyLines = step.mobileBodyLines;
+  const narrowMobileBodyLines = step.narrowMobileBodyLines;
 
   useEffect(() => {
     if (!animate || !itemRef.current) {
@@ -233,19 +254,40 @@ function MobileStaticStoryItem({
         </h2>
         <p className="story-stepper-static-body mx-auto mt-7 max-w-[760px] font-satoshi text-[28px] leading-[1.35]">
           {animate
-            ? mobileBodyLines.map((line, index) => (
-                <span
-                  key={`${step.number}-${line}`}
-                  className="story-body-line"
-                  style={
-                    {
-                      "--text-reveal-delay": `${260 + index * 180}ms`,
-                    } as CSSProperties
-                  }
-                >
-                  {line}
-                </span>
-              ))
+            ? (
+                <>
+                  <span className="story-body-lines-default">
+                    {mobileBodyLines.map((line, index) => (
+                      <span
+                        key={`${step.number}-default-${line}`}
+                        className="story-body-line"
+                        style={
+                          {
+                            "--text-reveal-delay": `${260 + index * 180}ms`,
+                          } as CSSProperties
+                        }
+                      >
+                        {line}
+                      </span>
+                    ))}
+                  </span>
+                  <span className="story-body-lines-narrow">
+                    {narrowMobileBodyLines.map((line, index) => (
+                      <span
+                        key={`${step.number}-narrow-${line}`}
+                        className="story-body-line"
+                        style={
+                          {
+                            "--text-reveal-delay": `${260 + index * 180}ms`,
+                          } as CSSProperties
+                        }
+                      >
+                        {line}
+                      </span>
+                    ))}
+                  </span>
+                </>
+              )
             : mobileBodyLines.join(" ")}
         </p>
       </div>

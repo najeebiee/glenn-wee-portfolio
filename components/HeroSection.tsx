@@ -5,6 +5,7 @@ import type { CSSProperties, PointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import ScrollLine from "@/components/ScrollLine";
+import { useSiteEntrance } from "@/components/SiteEntranceProvider";
 
 const credentials = [
   "Ex-Business owner turned Financial Advisor",
@@ -144,7 +145,7 @@ function HeroPortraitTrail({ items }: { items: TrailItem[] }) {
   );
 }
 
-function HeroPortraitPanel() {
+function HeroPortraitPanel({ entranceReady }: { entranceReady: boolean }) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const itemIdRef = useRef(0);
   const imageIndexRef = useRef(0);
@@ -154,6 +155,10 @@ function HeroPortraitPanel() {
   const [items, setItems] = useState<TrailItem[]>([]);
 
   useEffect(() => {
+    if (!entranceReady) {
+      return;
+    }
+
     const panel = panelRef.current;
 
     if (!panel) {
@@ -230,9 +235,13 @@ function HeroPortraitPanel() {
     );
 
     return () => mm.revert();
-  }, []);
+  }, [entranceReady]);
 
   useEffect(() => {
+    if (!entranceReady) {
+      return;
+    }
+
     const removeTimers = removeTimersRef.current;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const coarsePointer = window.matchMedia("(pointer: coarse)");
@@ -255,7 +264,7 @@ function HeroPortraitPanel() {
       tabletPortrait.removeEventListener("change", syncEnabled);
       removeTimers.forEach((timer) => window.clearTimeout(timer));
     };
-  }, []);
+  }, [entranceReady]);
 
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (!isEnabled) {
@@ -331,6 +340,10 @@ function HeroPortraitPanel() {
               height={238}
               className="h-full w-full object-cover"
               sizes="130px"
+              loading={index < trailImages.length ? "eager" : "lazy"}
+              data-entrance-critical={
+                index < trailImages.length ? `trail-${index + 1}` : undefined
+              }
             />
           </span>
         ))}
@@ -342,12 +355,15 @@ function HeroPortraitPanel() {
         priority
         className="z-10 object-contain object-bottom"
         sizes="45vw"
+        data-entrance-critical="portrait"
       />
     </div>
   );
 }
 
 export default function HeroSection() {
+  const { status } = useSiteEntrance();
+
   return (
     <section
       id="top"
@@ -503,7 +519,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <HeroPortraitPanel />
+      <HeroPortraitPanel entranceReady={status === "ready"} />
     </section>
   );
 }

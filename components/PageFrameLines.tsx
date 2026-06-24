@@ -3,15 +3,21 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useSiteEntrance } from "@/components/SiteEntranceProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function PageFrameLines() {
+  const { status } = useSiteEntrance();
   const frameRef = useRef<HTMLDivElement | null>(null);
   const lastHeightRef = useRef(0);
   const introStartRef = useRef(0);
 
   useEffect(() => {
+    if (status !== "ready") {
+      return;
+    }
+
     const frame = frameRef.current;
 
     if (!frame) {
@@ -26,9 +32,10 @@ export default function PageFrameLines() {
       return;
     }
 
-    introStartRef.current = Date.now();
     const introDuration = 1150;
     const introViewportRatio = 0.88;
+    introStartRef.current = Date.now();
+    lastHeightRef.current = 0;
 
     const updateRails = () => {
       const introProgress = Math.min(
@@ -85,7 +92,7 @@ export default function PageFrameLines() {
       window.removeEventListener("scroll", updateRails);
       window.removeEventListener("resize", updateRails);
     };
-  }, []);
+  }, [status]);
 
   return (
     <div

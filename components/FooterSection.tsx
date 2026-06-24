@@ -160,7 +160,7 @@ export default function FooterSection() {
           <h2 className="mt-[33px] max-w-[690px] font-manrope text-[64px] font-semibold leading-[1.36] tracking-normal">
             <span className="footer-heading-desktop">
               <SplitFooterHeadingLine text="Build a plan designed" delay={160} />
-              <span className="mt-[1px] flex items-center gap-[40px]">
+              <span className="mt-[1px] flex items-center gap-[18px] xl:gap-[40px]">
                 <SplitFooterHeadingLine text="for real life." delay={520} />
                 <a
                   href={WHATSAPP_URL}

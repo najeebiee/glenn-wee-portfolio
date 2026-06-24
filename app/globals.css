@@ -83,7 +83,10 @@
   --accent-text-rgb: 8 8 8;
   --muted: #b9b3a8;
   --icon-on-paper-filter: invert(1);
-  --icon-on-accent-filter: invert(1);
+  /* Accent fill is light cream in this theme, so icons sitting on it (e.g. the
+     "Explore My Approach" arrow on hover) must stay dark rather than inverting
+     to white. */
+  --icon-on-accent-filter: none;
   --icon-on-ink-filter: invert(1);
 }
 
@@ -1388,9 +1391,16 @@ a {
 }
 
 .about-arrow,
-.approach-intro-arrow,
 .hero-arrow-reveal,
 .tablet-menu-arrow {
+  filter: var(--icon-on-paper-filter);
+}
+
+/* The .approach-intro-arrow wrapper runs soft-text-reveal, which animates
+   `filter` (blur) with fill mode `both` and would clobber the theme recolor.
+   Recolor the inner img instead — it isn't animated, so the blur (on the
+   wrapper) and the recolor (on the img) compose cleanly. */
+.approach-intro-arrow img {
   filter: var(--icon-on-paper-filter);
 }
 
@@ -2677,9 +2687,9 @@ a {
   }
 
   #contact h2 > span:last-child {
-    align-items: flex-start !important;
-    flex-direction: column !important;
-    gap: clamp(14px, 1.6vw, 20px) !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
   }
 
   #contact .footer-cta {

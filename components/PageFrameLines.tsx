@@ -62,6 +62,26 @@ export default function PageFrameLines() {
       gsap.set(rails, { height: nextHeight });
     };
 
+    // The rails are part of the page, so their height feeds back into
+    // document.documentElement.scrollHeight. Combined with the monotonic growth
+    // in updateRails, a previous (taller) rail height keeps the document from
+    // shrinking when the viewport changes — leaving a large empty gap below the
+    // footer. On resize, collapse the rails and drop the baseline, then refresh
+    // ScrollTrigger (so pinned sections revert their spacers for the new
+    // breakpoint) before re-measuring against the true content height. Debounced
+    // so the measurement runs after the layout has settled.
+    let resizeSettleTimer = 0;
+    const recomputeRails = () => {
+      lastHeightRef.current = 0;
+      gsap.set(rails, { height: 0 });
+      ScrollTrigger.refresh();
+      updateRails();
+    };
+    const handleResize = () => {
+      window.clearTimeout(resizeSettleTimer);
+      resizeSettleTimer = window.setTimeout(recomputeRails, 220);
+    };
+
     updateRails();
     let introFrame = 0;
     const animateIntro = () => {
@@ -74,7 +94,7 @@ export default function PageFrameLines() {
 
     introFrame = window.requestAnimationFrame(animateIntro);
     window.addEventListener("scroll", updateRails, { passive: true });
-    window.addEventListener("resize", updateRails);
+    window.addEventListener("resize", handleResize);
 
     const refreshTimer = window.setTimeout(() => {
       ScrollTrigger.refresh();
@@ -88,9 +108,10 @@ export default function PageFrameLines() {
     return () => {
       window.clearTimeout(refreshTimer);
       window.clearTimeout(lateRefreshTimer);
+      window.clearTimeout(resizeSettleTimer);
       window.cancelAnimationFrame(introFrame);
       window.removeEventListener("scroll", updateRails);
-      window.removeEventListener("resize", updateRails);
+      window.removeEventListener("resize", handleResize);
     };
   }, [status]);
 

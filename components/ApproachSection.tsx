@@ -305,7 +305,7 @@ function MissionVision({
   isVisible?: boolean;
 }) {
   const useCompactBodyLines = useMediaQuery(
-    "(min-width: 1024px) and (max-width: 1224px)"
+    "(min-width: 1024px) and (max-width: 1499.98px)"
   );
   const useMobileBodyLines = useMediaQuery("(max-width: 448px)");
   const useSmallBodyLines = useMediaQuery("(max-width: 397px)");

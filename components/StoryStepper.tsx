@@ -433,6 +433,8 @@ export default function StoryStepper() {
         pinSpacing: true,
         scrub: 0.25,
         anticipatePin: 1,
+        refreshPriority: 2,
+        invalidateOnRefresh: true,
         onUpdate: (self) => {
           const storyProgress = Math.min(1, self.progress / 0.76);
           const nextIndex = Math.min(
@@ -459,6 +461,11 @@ export default function StoryStepper() {
           });
         },
       });
+
+      // This pin is mounted after the initial viewport check. Refresh all
+      // downstream triggers so the Approach section includes this pin spacer
+      // in its measured start position.
+      ScrollTrigger.refresh();
 
       return () => {
         entranceTrigger.kill();

@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import ScrollLine from "@/components/ScrollLine";
+import { WHATSAPP_URL } from "@/lib/contact";
 
 type ClientGroup = {
   title: string;
@@ -372,7 +373,9 @@ export default function ClientsSection() {
                 ) : null}
               </div>
               <a
-                href="#contact"
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="invert-hover-button absolute bottom-[22px] inline-flex h-[58px] items-center gap-3 rounded-full border border-line px-[18px] font-manrope text-[16px] font-semibold"
               >
                 {group.cta}

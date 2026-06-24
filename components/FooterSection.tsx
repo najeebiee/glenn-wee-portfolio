@@ -4,11 +4,20 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import FooterEmailCopy from "@/components/FooterEmailCopy";
 import ScrollLine from "@/components/ScrollLine";
+import { WHATSAPP_URL } from "@/lib/contact";
 
 const footerSocials = [
-  { label: "Instagram", href: "#", icon: "/icons/instagram.svg" },
-  { label: "LinkedIn", href: "#", icon: "/icons/linkedin.svg" },
-  { label: "WhatsApp", href: "#", icon: "/icons/whatsapp.svg" },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/glennweee/",
+    icon: "/icons/instagram.svg",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/glenn-wee-b0b115211/",
+    icon: "/icons/linkedin.svg",
+  },
+  { label: "WhatsApp", href: WHATSAPP_URL, icon: "/icons/whatsapp.svg" },
 ];
 
 const footerCredentials = [
@@ -154,7 +163,9 @@ export default function FooterSection() {
               <span className="mt-[1px] flex items-center gap-[40px]">
                 <SplitFooterHeadingLine text="for real life." delay={520} />
                 <a
-                  href="mailto:glennweejl@pruadviser.com.sg"
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="footer-cta invert-hover-button inline-flex h-[58px] shrink-0 items-center rounded-full border border-line px-8 font-satoshi text-[20px] font-medium leading-none"
                 >
                   Book Consultation
@@ -165,7 +176,9 @@ export default function FooterSection() {
               <SplitFooterHeadingLine text="Build a plan" delay={160} />
               <SplitFooterHeadingLine text="designed for real life." delay={420} />
               <a
-                href="mailto:glennweejl@pruadviser.com.sg"
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="footer-cta invert-hover-button mt-7 inline-flex h-[58px] shrink-0 items-center rounded-full border border-line px-8 font-satoshi text-[20px] font-medium leading-none"
               >
                 Book Consultation
@@ -188,6 +201,8 @@ export default function FooterSection() {
               <a
                 key={social.label}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={social.label}
                 className="footer-social-link scroll-line-host group relative grid place-items-center border-line transition-colors duration-300 hover:bg-ink first:border-l-0 [&:not(:first-child)]:border-l"
                 style={{ "--footer-delay": `${520 + index * 90}ms` } as CSSProperties}

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import ScrollLine from "@/components/ScrollLine";
 import { useSiteEntrance } from "@/components/SiteEntranceProvider";
+import { WHATSAPP_URL } from "@/lib/contact";
 
 const credentials = [
   "Ex-Business owner turned Financial Advisor",
@@ -498,13 +499,17 @@ export default function HeroSection() {
           />
           <a
             className="cta-button cta-button-dark shrink-0 whitespace-nowrap rounded-full bg-ink px-8 py-5 font-satoshi text-[20px] font-medium text-white"
-            href="#contact"
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <span>Book a Consultation</span>
           </a>
           <a
             className="cta-button cta-button-outline inline-flex shrink-0 whitespace-nowrap rounded-full border border-line px-8 py-5 font-satoshi text-[20px] font-medium"
-            href="#approach"
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             <span>Explore My Approach</span>
             <Image

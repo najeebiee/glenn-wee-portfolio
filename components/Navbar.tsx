@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useSiteEntrance } from "@/components/SiteEntranceProvider";
+import { WHATSAPP_URL } from "@/lib/contact";
 
 const navItems = [
   { label: "About", href: "#about", id: "about" },
@@ -239,7 +240,9 @@ export default function Navbar() {
       <div data-navbar-reveal className="navbar-cta justify-self-end">
         <a
           className="cta-button cta-button-dark rounded-full bg-ink px-8 py-4 font-manrope text-[16px] font-medium text-white"
-          href="#contact"
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={keepVisible}
         >
           <span>Book a Consultation</span>
@@ -288,7 +291,9 @@ export default function Navbar() {
             ))}
             <a
               className="cta-button cta-button-dark tablet-menu-cta rounded-full bg-ink font-manrope font-medium text-white"
-              href="#contact"
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={keepVisible}
               style={
                 {

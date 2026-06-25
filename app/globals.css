@@ -4755,7 +4755,7 @@ a {
 @media (max-width: 767.98px) and (max-height: 650px) {
   .tablet-menu-link {
     font-size: clamp(20px, 6.5vw, 28px);
-    padding-block: 12px;
+    padding-block: 20px;
   }
 }
 
